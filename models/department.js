@@ -40,5 +40,10 @@ const Department = sequelize.define('department', {
   timestamps: false,
   tableName: 'department'
 });
-
+Department.deleteDepartment = async (deptId) => {
+  const [results] = await sequelize.query("CALL DeleteDepartment(:deptId)", {
+    replacements: { deptId },
+  });
+  return results;
+};
 module.exports = Department;

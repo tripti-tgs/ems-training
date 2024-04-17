@@ -30,9 +30,9 @@ const Employee = sequelize.define('employee', {
 });
 
 Employee.belongsTo(Department, { foreignKey: 'dept_id' });
-Employee.belongsTo(User, { as: 'createdByUser', foreignKey: 'created_by' });
-Employee.belongsTo(User, { as: 'updatedByUser', foreignKey: 'updated_by' });
-Employee.belongsTo(User, { as: 'deletedByUser', foreignKey: 'deleted_by' });
+// Employee.belongsTo(User, { as: 'createdByUser', foreignKey: 'created_by' });
+// Employee.belongsTo(User, { as: 'updatedByUser', foreignKey: 'updated_by' });
+// Employee.belongsTo(User, { as: 'deletedByUser', foreignKey: 'deleted_by' });
 
 
 module.exports = Employee;
