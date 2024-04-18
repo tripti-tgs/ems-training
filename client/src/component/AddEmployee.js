@@ -10,6 +10,7 @@ import {
   Mentions,
   Select,
   TreeSelect,
+  Alert,
 } from "antd";
 const { Option } = Select;
 const formItemLayout = {
@@ -31,27 +32,26 @@ const formItemLayout = {
   },
 };
 
-
 const onFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
 function AddEmployee() {
   const [dept, setDept] = useState([]);
   const [employees, setEmployees] = useState();
+  const [info, setInfo] = useState(null);
 
-  const onFinish = async(values) => {
-    let date = `${values.dob.$y}-0${values.dob.$M + 1}-${values.dob.$D}`;
+  const onFinish = async (values) => {
+    let date = `${values.dob.$y}-${values.dob.$M <9 ? `0${values.dob.$M + 1}`:`${values.dob.$M + 1}`}-${values.dob.$D}`;
     values.dob = date;
-        console.log("Success:", values);
+    // console.log("Success:", values);
     try {
-      let response = await http.post("/employee/create",values);
-      console.log(response.data)
+      let response = await http.post("/employee/create", values);
       setEmployees(response.data);
+      setInfo(null)
     } catch (err) {
-      console.log(err);
+      console.log("errr", err);
+      setInfo(err?.response?.data?.message);
     }
-
-  
   };
 
   useEffect(() => {
@@ -59,6 +59,7 @@ function AddEmployee() {
       try {
         let response = await http.get("/department");
         setDept(response.data);
+        setInfo(null)
       } catch (err) {
         console.log(err);
       }
@@ -69,6 +70,10 @@ function AddEmployee() {
 
   return (
     <Fragment>
+      {info && (
+        <Alert message={info} type="success" className="mb-3" closable />
+      )}
+
       <Form
         {...formItemLayout}
         variant="filled"
@@ -109,17 +114,17 @@ function AddEmployee() {
         </Form.Item>
 
         <Form.Item
-  label="Phone"
-  name="Phone"
-  rules={[
-    {
-      required: true,
-      message: "Please input your phone number",
-    }
-  ]}
->
-  <InputNumber style={{ width: '100%' }} />
-</Form.Item>
+          label="Phone"
+          name="phone"
+          rules={[
+            {
+              required: true,
+              message: "Please input your phone number",
+            },
+          ]}
+        >
+          <InputNumber style={{ width: "100%" }} />
+        </Form.Item>
 
         <Form.Item
           label="Department"
