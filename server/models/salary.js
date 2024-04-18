@@ -27,8 +27,8 @@ const Salary = sequelize.define('salary', {
 });
 
 Salary.belongsTo(Employee, { foreignKey: 'emp_id' });
-// Salary.belongsTo(User, { as: 'createdByUser', foreignKey: 'created_by' });
-// Salary.belongsTo(User, { as: 'updatedByUser', foreignKey: 'updated_by' });
-// Salary.belongsTo(User, { as: 'deletedByUser', foreignKey: 'deleted_by' });
+Salary.belongsTo(User, { as: 'createdByUser', foreignKey: 'created_by' });
+Salary.belongsTo(User, { as: 'updatedByUser', foreignKey: 'updated_by' });
+Salary.belongsTo(User, { as: 'deletedByUser', foreignKey: 'deleted_by' });
 
 module.exports = Salary;

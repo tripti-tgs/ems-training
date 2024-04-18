@@ -5,8 +5,8 @@ const validateMiddleware = require("../middleware/validation");
 const sequelize = require("../db/index");
 exports.createEmployee = async (req, res) => {
   const { name, email, phone, gender, dob, dept_id } = req.body;
-  const createdBy = req.userData.userId;
-
+  // const createdBy = req.userData.userId;
+  const createdBy = 7;
   try {
     const findemail = await Employee.findOne({
       where: { email },
@@ -150,7 +150,7 @@ exports.createEmployeeAndDept = async (req, res) => {
 exports.getEmpAndDep = async (req, res) => {
   try {
     const employees = await Employee.findAll({
-      where: { isDeleted: { [Op.not]: 1 } },
+      // where: { isDeleted: { [Op.not]: 1 } },
       include: [
         {
           model: Department,
@@ -213,8 +213,8 @@ exports.updateEmployee = async (req, res) => {
 
 exports.deleteEmployee = async (req, res) => {
   const { id } = req.params;
-  const deletedBy = req.userData.userId;
-
+  // const deletedBy = req.userData.userId;
+  const deletedBy = 9;
   try {
     const employee = await Employee.findByPk(id);
     if (!employee) {

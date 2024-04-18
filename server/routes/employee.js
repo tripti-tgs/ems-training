@@ -6,7 +6,7 @@ const employeeController = require("../controllers/employeeController");
 
 const router = express.Router();
 
-router.use(authMiddleware);
+// router.use(authMiddleware);
 
 router.post(
   "/create",
