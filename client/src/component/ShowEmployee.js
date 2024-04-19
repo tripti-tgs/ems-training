@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import http from "../services/httpService";
-import { Space, Table, Alert, Button, Input } from "antd";
+import { Space, Button, Alert } from "antd";
 import EmployeeColumns from "./EmployeeColumns";
 import { Link, useNavigate } from "react-router-dom";
+import EmployeeTable from "./EmployeeTable";
+import EmployeeSearch from "./EmployeeSearch";
 
 function ShowEmployee() {
   const [employees, setEmployees] = useState([]);
@@ -11,8 +13,7 @@ function ShowEmployee() {
   const navigate = useNavigate();
 
   const fetchEmployees = useCallback(async () => {
-  
-   let url = search ? `/employee/empanddep${search}`:'/employee/empanddep'
+    let url = search ? `/employee/empanddep${search}` : '/employee/empanddep';
     try {
       let response = await http.get(url);
       setEmployees(response.data);
@@ -49,8 +50,9 @@ function ShowEmployee() {
   const handleSearch = (e) => {
     const { currentTarget: input } = e;
     let str = `?search=${input.value}`;
-    setSearch(str)
+    setSearch(str);
   };
+
   return (
     <div className="mt-4 ">
       <div className="px-5">
@@ -59,23 +61,21 @@ function ShowEmployee() {
             Add Employee
           </Link>
         </Button>
-        <Input placeholder="search..." onChange={handleSearch} />
+        <EmployeeSearch handleSearch={handleSearch} />
         {info?.message && (
           <Alert
             message={info?.message}
             type="success"
-            className="mb-3"
+            className="mb-3 mt-3"
             closable
           />
         )}
       </div>
       <div className="p-5">
-        <Table
-          columns={EmployeeColumns(handleEdit, handleDelete)}
-          dataSource={employees}
-          bordered
-          centered
-          size="small"
+        <EmployeeTable
+          employees={employees}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
         />
       </div>
     </div>
