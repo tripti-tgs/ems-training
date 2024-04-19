@@ -36,7 +36,7 @@ exports.createDepartment = async (req, res) => {
 exports.getAllDepartments = async (req, res) => {
   try {
     const departments = await Department.findAll({
-      where: { isDeleted: { [Op.not]: 1 } },
+      // where: { isDeleted: { [Op.not]: 1 } },
     });
 
     res.json(departments);

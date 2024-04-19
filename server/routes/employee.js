@@ -40,6 +40,8 @@ router.get("/empanddep", employeeController.getEmpAndDep);
 
 router.get("/", employeeController.getAllEmployees);
 
+router.get("/:id", employeeController.getOneEmployees);
+
 router.put(
   "/:id",
   [

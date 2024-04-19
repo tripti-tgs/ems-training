@@ -15,7 +15,8 @@ exports.createEmployee = async (req, res) => {
 
     if (findemail) {
       return res.status(400).json({
-        message: "Employee is already present, please try using a different email.",
+        message:
+          "Employee is already present, please try using a different email.",
       });
     }
 
@@ -65,96 +66,103 @@ exports.createEmployee = async (req, res) => {
   }
 };
 
-
-
 exports.createEmployeeAndDept = async (req, res) => {
-    const { name, email, phone, gender, dob, dept_name } = req.body;
-    const createdBy = req.userData.userId;
-  
-    const transaction = await sequelize.transaction();
-  
-    try {
-      const findemail = await Employee.findOne({
-        where: { email },
-        attributes: { exclude: ["createdAt", "updatedAt"] },
-        transaction,
-      });
-  
-      if (findemail) {
-        await transaction.rollback();
-        return res.status(400).json({
-          message: "Employee is already present, please try using a different email.",
-        });
-      }
-  
-      const findname = await Department.findOne({
-        where: { name: dept_name },
-        attributes: { exclude: ["createdAt", "updatedAt"] },
-        transaction,
-      });
-      
-      if (findname) {
-        await transaction.rollback();
-        return res.status(400).json({
-          message: "The department has been located. Please try another department name.",
-        });
-      }
-  
-      const department = await Department.create(
-        { name:dept_name, isDeleted: 0, created_by: createdBy, created_at: new Date() },
-        {
-          fields: ["name", "isDeleted", "created_by", "created_at"],
-          attributes: { exclude: ["createdAt", "updatedAt"] },
-          transaction,
-        }
-      );
+  const { name, email, phone, gender, dob, dept_name } = req.body;
+  const createdBy = req.userData.userId;
 
-      const employee = await Employee.create(
-        {
-          name,
-          email,
-          phone,
-          gender,
-          dob,
-          isDeleted: 0,
-          dept_id: department?.dataValues?.id,
-          created_by: createdBy,
-          created_at: new Date(),
-        },
-        {
-          fields: [
-            "name",
-            "email",
-            "phone",
-            "gender",
-            "dob",
-            "isDeleted",
-            "dept_id",
-            "created_by",
-            "created_at",
-          ],
-          attributes: { exclude: ["createdAt", "updatedAt"] },
-          transaction,
-        }
-      );
-  
-      await transaction.commit();
-  
-      res.json(employee);
-    } catch (error) {
-      await transaction.rollback();
-      console.error(error);
-      res.status(500).json({ message: "Server error" });
-    }
-  };
-exports.getEmpAndDep = async (req, res) => {
+  const transaction = await sequelize.transaction();
+
   try {
-    const employees = await Employee.findAll({
-      // where: { isDeleted: { [Op.not]: 1 } },
+    const findemail = await Employee.findOne({
+      where: { email },
+      attributes: { exclude: ["createdAt", "updatedAt"] },
+      transaction,
+    });
+
+    if (findemail) {
+      await transaction.rollback();
+      return res.status(400).json({
+        message:
+          "Employee is already present, please try using a different email.",
+      });
+    }
+
+    const findname = await Department.findOne({
+      where: { name: dept_name },
+      attributes: { exclude: ["createdAt", "updatedAt"] },
+      transaction,
+    });
+
+    if (findname) {
+      await transaction.rollback();
+      return res.status(400).json({
+        message:
+          "The department has been located. Please try another department name.",
+      });
+    }
+
+    const department = await Department.create(
+      {
+        name: dept_name,
+        isDeleted: 0,
+        created_by: createdBy,
+        created_at: new Date(),
+      },
+      {
+        fields: ["name", "isDeleted", "created_by", "created_at"],
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+        transaction,
+      }
+    );
+
+    const employee = await Employee.create(
+      {
+        name,
+        email,
+        phone,
+        gender,
+        dob,
+        isDeleted: 0,
+        dept_id: department?.dataValues?.id,
+        created_by: createdBy,
+        created_at: new Date(),
+      },
+      {
+        fields: [
+          "name",
+          "email",
+          "phone",
+          "gender",
+          "dob",
+          "isDeleted",
+          "dept_id",
+          "created_by",
+          "created_at",
+        ],
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+        transaction,
+      }
+    );
+
+    await transaction.commit();
+
+    res.json(employee);
+  } catch (error) {
+    await transaction.rollback();
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getOneEmployees = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const employees = await Employee.findOne({
+      where: { id: id },
       include: [
         {
           model: Department,
-          attributes: ["name"],
+          attributes: ["name", "id"],
         },
       ],
       attributes: {
@@ -168,14 +176,83 @@ exports.getEmpAndDep = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+exports.getEmpAndDep = async (req, res) => {
+  const { search } = req.query;
+
+  try {
+    const employees = await Employee.findAll({
+      // where: { isDeleted: { [Op.not]: 1 } },
+      include: [
+        {
+          model: Department,
+          attributes: ["name", "id"],
+        },
+      ],
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
+    });
+    let arr;
+    if (search) {
+       arr = employees.filter((e) => {
+        return (
+          e.name.toLowerCase().includes(search.toLowerCase()) ||
+          e.email.toLowerCase().includes(search.toLowerCase())
+        );
+      });
+    }
+
+    arr = arr ? arr : employees;
+    res.json(arr);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// exports.getAllEmployees = async (req, res) => {
+//   try {
+//     const employees = await Employee.findAll({
+//       where: { isDeleted: { [Op.not]: 1 } },
+//     });
+
+// const whereClause = {
+//   isDeleted: { [Op.not]: 1 },
+// };
+
+// if (firstName) {
+//   whereClause.firstName = { [Op.iLike]: `%${firstName}%` };
+// }
+
+// if (lastName) {
+//   whereClause.lastName = { [Op.iLike]: `%${lastName}%` };
+// }
+
+// if (email) {
+//   whereClause.email = { [Op.iLike]: `%${email}%` };
+// }
+//     res.json(employees);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 exports.getAllEmployees = async (req, res) => {
   try {
-    const employees = await Employee.findAll({
-      where: { isDeleted: { [Op.not]: 1 } },
+    const { search } = req.query;
+
+    const employees = await Employee.findAll();
+
+    let arr = employees.filter((e) => {
+      return (
+        e.name.toLowerCase().includes(toLowerCase().search) ||
+        e.email.includes(toLowerCase().search)
+      );
     });
 
-    res.json(employees);
+    arr = arr.length == 0 ? employees : arr;
+    res.json(arr);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -185,8 +262,8 @@ exports.getAllEmployees = async (req, res) => {
 exports.updateEmployee = async (req, res) => {
   const { id } = req.params;
   const { name, email, phone, gender, dob, dept_id } = req.body;
-  const updatedBy = req.userData.userId;
-
+  // const updatedBy = req.userData.userId;
+  const updatedBy = 6;
   try {
     const employee = await Employee.findByPk(id);
     if (!employee) {

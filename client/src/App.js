@@ -23,6 +23,10 @@ function App() {
           path="/add"
           element={<AddEmployee />}
         />
+        <Route
+          path="/edit/:id"
+          element={<AddEmployee />}
+        />
       </Routes>
     </Router>
   </Fragment>
