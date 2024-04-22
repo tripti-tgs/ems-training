@@ -187,6 +187,7 @@ exports.getEmpAndDep = async (req, res) => {
           model: Department,
           attributes: ["name", "id"],
         },
+        
       ],
       attributes: {
         exclude: ["createdAt", "updatedAt"],
