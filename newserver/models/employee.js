@@ -28,66 +28,6 @@ const Employee = sequelize.define('Employee', {
     timestamps: false
 });
 
-const EmployeeHistory = sequelize.define('EmployeeHistory', {
-    Id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    EmployeeId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    FieldName: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    OldValue: {
-        type: DataTypes.STRING
-    },
-    NewValue: {
-        type: DataTypes.STRING
-    },
-    CreatedBy: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    CreatedAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
-    }
-}, {
-    tableName: 'tbl_employee_history',
-    timestamps: false
-});
-
-Employee.addHook('afterUpdate', async (employee, options) => {
-    const oldEmployee = options.previousDataValues;
-    const transaction = options.transaction;
-
-    if (oldEmployee.name !== employee.name) {
-        await EmployeeHistory.create({
-            EmployeeId: employee.employee_id,
-            FieldName: 'name',
-            OldValue: oldEmployee.name,
-            NewValue: employee.name,
-            CreatedBy: 'System'
-        }, { transaction });
-    }
-
-    if (oldEmployee.email !== employee.email) {
-        await EmployeeHistory.create({
-            EmployeeId: employee.employee_id,
-            FieldName: 'email',
-            OldValue: oldEmployee.email,
-            NewValue: employee.email,
-            CreatedBy: 'System'
-        }, { transaction });
-    }
-});
-
-
-
 Employee.getEmployeeById = async (employeeId) => {
   const [results] = await sequelize.query("CALL GetEmployeeById(:employeeId)", {
     replacements: { employeeId: employeeId },
@@ -162,4 +102,4 @@ Employee.deleteEmployee = async (employeeId) => {
   });
 };
 
-module.exports = { Employee, EmployeeHistory };
+module.exports = { Employee };

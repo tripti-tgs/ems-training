@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 22, 2024 at 03:51 PM
+-- Generation Time: Apr 24, 2024 at 07:22 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -26,49 +26,9 @@ DELIMITER $$
 -- Procedures
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `AddOrUpdateEmployee` (IN `EMPLOYEE_ID` INT, IN `FIRST_NAME` VARCHAR(50), IN `LAST_NAME` VARCHAR(50), IN `EMAIL` VARCHAR(50), IN `PHONE_NUMBER` VARCHAR(15), IN `HIRE_DATE` DATE, IN `JOB_ID` VARCHAR(50), IN `SALARY` DECIMAL(10,2), IN `EMPLOYEE_PHOTO` VARCHAR(255), IN `COMMISSION_PCT` DECIMAL(3,2), IN `MANAGER_ID` INT, IN `DEPARTMENT_ID` INT)   BEGIN
-    DECLARE old_name VARCHAR(255);
-    DECLARE old_email VARCHAR(255);
-    
-    SELECT FIRST_NAME, EMAIL INTO old_name, old_email 
-    FROM tbl_employees 
-    WHERE EMPLOYEE_ID = EMPLOYEE_ID 
-    LIMIT 1;
- 
- INSERT INTO Tbl_Employees (EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER, HIRE_DATE, JOB_ID, SALARY, EMPLOYEE_PHOTO, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID)
+  INSERT INTO Tbl_Employees (EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER, HIRE_DATE, JOB_ID, SALARY, EMPLOYEE_PHOTO, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID)
   VALUES (EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER, HIRE_DATE, JOB_ID, SALARY, EMPLOYEE_PHOTO, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID)
   ON DUPLICATE KEY UPDATE FIRST_NAME = FIRST_NAME, LAST_NAME = LAST_NAME, EMAIL = EMAIL, PHONE_NUMBER = PHONE_NUMBER, HIRE_DATE = HIRE_DATE, JOB_ID = JOB_ID, SALARY = SALARY, EMPLOYEE_PHOTO = EMPLOYEE_PHOTO, COMMISSION_PCT = COMMISSION_PCT, MANAGER_ID = MANAGER_ID, DEPARTMENT_ID = DEPARTMENT_ID;
-    
-    IF old_name = FIRST_NAME THEN
-        INSERT INTO tbl_employee_history (
-            EmployeeId, 
-            FieldName, 
-            OldValue, 
-            NewValue, 
-            CreatedBy
-        ) VALUES (
-            EMPLOYEE_ID, 
-            'name', 
-            old_name, 
-            FIRST_NAME, 
-            'System'
-        );
-    END IF;
-    
-    IF old_email = EMAIL THEN
-        INSERT INTO tbl_employee_history (
-            EmployeeId, 
-            FieldName, 
-            OldValue, 
-            NewValue, 
-            CreatedBy
-        ) VALUES (
-            EMPLOYEE_ID, 
-            'email', 
-            old_email, 
-            EMAIL, 
-            'System'
-        );
-    END IF;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteEmployee` (IN `employeeId` INT)   BEGIN
@@ -86,6 +46,37 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetEmployeeById` (IN `employeeId` I
 END$$
 
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `history`
+--
+
+CREATE TABLE `history` (
+  `Id` int(11) NOT NULL,
+  `FieldName` varchar(255) DEFAULT NULL,
+  `OldVal` text DEFAULT NULL,
+  `NewVal` text DEFAULT NULL,
+  `CreatedBy` varchar(255) DEFAULT NULL,
+  `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `history`
+--
+
+INSERT INTO `history` (`Id`, `FieldName`, `OldVal`, `NewVal`, `CreatedBy`, `CreatedAt`) VALUES
+(100, 'First Name', 'Steven', 'Steven134', 'root@localhost', '2024-04-24 05:07:06'),
+(100, 'Email', 'SKING', 'SKING234', 'root@localhost', '2024-04-24 05:07:06'),
+(100, 'First Name', 'Steven', 'Steven134', 'root@localhost', '2024-04-24 05:07:06'),
+(100, 'Email', 'SKING', 'SKING234', 'root@localhost', '2024-04-24 05:07:06'),
+(100, 'First Name', 'Steven134', 'Steven13y4', 'root@localhost', '2024-04-24 05:09:03'),
+(100, 'Email', 'SKING234', 'SKING2y34', 'root@localhost', '2024-04-24 05:09:03'),
+(100, 'First Name', 'Steven134', 'Steven13y4', 'root@localhost', '2024-04-24 05:09:03'),
+(100, 'Email', 'SKING234', 'SKING2y34', 'root@localhost', '2024-04-24 05:09:03'),
+(100, 'First Name', 'Steven13y4', 'Stev2en13y4', 'root@localhost', '2024-04-24 05:11:03'),
+(100, 'Email', 'SKING2y34', 'SKING22y34', 'root@localhost', '2024-04-24 05:11:03');
 
 -- --------------------------------------------------------
 
@@ -208,23 +199,23 @@ INSERT INTO `tbl_employees` (`EMPLOYEE_ID`, `FIRST_NAME`, `LAST_NAME`, `EMAIL`, 
 (3, 'John', 'Doe', 'john.doe@example.com', '123-456-7890', '2024-04-22', 'AD_VP', 50000.00, '/path/to/photo.jpg', 0.10, 106, 10),
 (44, 'John', 'Doe', 'john.doe@example.com', '123-456-7890', '2024-04-22', 'FI_MGR', 50000.00, '/path/to/photo.jpg', 0.10, 106, 10),
 (54, 'Nanette', 'Cambrault', 'NCAMBRAU', '011.44.1344.987', '2006-12-09', 'SA_REP', 7500.00, NULL, 0.20, 145, 80),
-(100, 'Steven', 'King', 'SKING', '515.123.4567', '2003-06-17', 'AD_PRES', 24000.00, NULL, 0.00, 0, 90),
+(100, 'Stev2en13y4', 'King', 'SKING22y34', '515.123.4567', '2003-06-17', 'AD_PRES', 24000.00, NULL, 0.00, 0, 90),
 (101, 'Neena', 'Kochhar', 'NKOCHHAR', '515.123.4568', '2005-09-21', NULL, 17000.00, '', 0.00, NULL, NULL),
 (102, 'Lex', 'DeHaan', 'LDEHAAN', '515.123.4569', '2001-01-13', 'AD_VP', 17000.00, '', 0.00, NULL, 90),
 (103, 'Alexander', 'Hunold', 'AHUNOLD', '590.423.4567', '2006-01-03', 'IT_PROG', 9000.00, '', 0.00, 102, 60),
 (104, 'Bruce', 'Ernst', 'BERNST', '590.423.4568', '2007-05-21', 'IT_PROG', 6000.00, '', 0.00, 103, 60),
 (105, 'David', 'Austin', 'DAUSTIN', '590.423.4569', '2005-06-25', 'IT_PROG', 4800.00, '', 0.00, 103, 60),
-(106, 'Valli', 'Pataballa', 'VPATABAL', '590.423.4560', '0000-00-00', 'IT_PROG', 4800.00, '', 0.00, 103, 60),
+(106, 'Valli', 'Pataballa', 'VPATABAL', '590.423.4560', '2006-05-02', 'IT_PROG', 4800.00, '', 0.00, 103, 60),
 (108, 'Nancy', 'Greenberg', 'NGREENBE', '515.124.4569', '2002-08-17', 'FI_MGR', 12008.00, '', 0.00, 101, 100),
 (109, 'Daniel', 'Faviet', 'DFAVIET', '515.124.4169', '2002-08-16', 'FI_ACCOUNT', 9000.00, '', 0.00, 108, 100),
 (110, 'John', 'Doe', 'john.doe@example.com', '123-456-7890', '2005-09-28', 'FI_MGR', 50000.00, '/path/to/photo.jpg', 0.10, 106, 10),
-(111, 'Ismael', 'Sciarra', 'ISCIARRA', '515.124.4369', '0000-00-00', 'FI_ACCOUNT', 7700.00, '', 0.00, 108, 100),
+(111, 'Ismael', 'Sciarra', 'ISCIARRA', '515.124.4369', '2005-09-28', 'FI_ACCOUNT', 7700.00, '', 0.00, 108, 100),
 (112, 'Jose Manuel', 'Urman', 'JMURMAN', '515.124.4469', '2006-03-07', 'FI_ACCOUNT', 7800.00, '', 0.00, 108, 100),
 (113, 'Luis', 'Popp', 'LPOPP', '515.124.4567', '2007-12-07', 'FI_ACCOUNT', 6900.00, '', 0.00, 108, 100),
-(114, 'Den', 'Raphaely', 'DRAPHEAL', '515.127.4561', '0000-00-00', 'PU_MAN', 11000.00, '', 0.00, NULL, 30),
+(114, 'Den', 'Raphaely', 'DRAPHEAL', '515.127.4561', '2002-07-12', 'PU_MAN', 11000.00, '', 0.00, NULL, 30),
 (115, 'Alexander', 'Khoo', 'AKHOO', '515.127.4562', '2003-05-18', 'PU_CLERK', 3100.00, '', 0.00, 114, 30),
 (116, 'Shelli', 'Baida', 'SBAIDA', '515.127.4563', '2005-12-24', 'PU_CLERK', 2900.00, '', 0.00, 114, 30),
-(117, 'Sigal', 'Tobias', 'STOBIAS', '515.127.4564', '0000-00-00', 'PU_CLERK', 2800.00, '', 0.00, 114, 30),
+(117, 'Sigal', 'Tobias', 'STOBIAS', '515.127.4564', '2005-07-24', 'PU_CLERK', 2800.00, '', 0.00, 114, 30),
 (118, 'Guy', 'Himuro', 'GHIMURO', '515.127.4565', '2006-11-15', 'PU_CLERK', 2600.00, '', 0.00, 114, 30),
 (119, 'Karen', 'Colmenares', 'KCOLMENA', '515.127.4566', '2007-08-10', 'PU_CLERK', 2500.00, '', 0.00, 114, 30),
 (120, 'Matthew', 'Weiss', 'MWEISS', '650.123.1234', '2004-07-18', 'ST_MAN', 8000.00, '', 0.00, NULL, 50),
@@ -240,7 +231,7 @@ INSERT INTO `tbl_employees` (`EMPLOYEE_ID`, `FIRST_NAME`, `LAST_NAME`, `EMAIL`, 
 (130, 'Mozhe', 'Atkinson', 'MATKINSO', '650.124.6234', '2005-10-30', 'ST_CLERK', 2800.00, '', 0.00, 121, 50),
 (131, 'James', 'Marlow', 'JAMRLOW', '650.124.7234', '2005-02-16', 'ST_CLERK', 2500.00, '', 0.00, 121, 50),
 (132, 'TJ', 'Olson', 'TJOLSON', '650.124.8234', '2007-04-10', 'ST_CLERK', 2100.00, '', 0.00, 121, 50),
-(133, 'Jason', 'Mallin', 'JMALLIN', '650.127.1934', '0000-00-00', 'ST_CLERK', 3300.00, '', 0.00, 122, 50),
+(133, 'Jason', 'Mallin', 'JMALLIN', '650.127.1934', '2004-06-14', 'ST_CLERK', 3300.00, '', 0.00, 122, 50),
 (134, 'Michael', 'Rogers', 'MROGERS', '650.127.1834', '2006-08-26', 'ST_CLERK', 2900.00, '', 0.00, 122, 50),
 (135, 'Ki', 'Gee', 'KGEE', '650.127.1734', '2007-12-12', 'ST_CLERK', 2400.00, '', 0.00, 122, 50),
 (136, 'Hazel', 'Philtanker', 'HPHILTAN', '650.127.1634', '2008-02-06', 'ST_CLERK', 2200.00, '', 0.00, 122, 50),
@@ -253,7 +244,7 @@ INSERT INTO `tbl_employees` (`EMPLOYEE_ID`, `FIRST_NAME`, `LAST_NAME`, `EMAIL`, 
 (143, 'Randall', 'Matos', 'RMATOS', '650.121.2874', '2006-03-15', 'ST_CLERK', 2600.00, '', 0.00, 124, 50),
 (144, 'Peter', 'Vargas', 'PVARGAS', '650.121.2004', '2006-07-09', 'ST_CLERK', 2500.00, '', 0.00, 124, 50),
 (145, 'John', 'Russell', 'JRUSSEL', '011.44.1344.429', '2004-10-01', 'SA_MAN', 14000.00, '', 0.40, NULL, 80),
-(146, 'Karen', 'Partners', 'KPARTNER', '011.44.1344.467', '0000-00-00', 'SA_MAN', 13500.00, '', 0.30, NULL, 80),
+(146, 'Karen', 'Partners', 'KPARTNER', '011.44.1344.467', '2005-05-01', 'SA_MAN', 13500.00, '', 0.30, NULL, 80),
 (147, 'Alberto', 'Errazuriz', 'AERRAZUR', '011.44.1344.429', '2005-03-10', 'SA_MAN', 12000.00, '', 0.30, NULL, 80),
 (148, 'Gerald', 'Cambrault', 'GCAMBRAU', '011.44.1344.619', '2007-10-15', 'SA_MAN', 11000.00, '', 0.30, NULL, 80),
 (149, 'Eleni', 'Zlotkey', 'EZLOTKEY', '011.44.1344.429', '2008-01-29', 'SA_MAN', 10500.00, '', 0.20, NULL, 80),
@@ -315,39 +306,23 @@ INSERT INTO `tbl_employees` (`EMPLOYEE_ID`, `FIRST_NAME`, `LAST_NAME`, `EMAIL`, 
 (205, 'Shelley', 'Higgins', 'SHIGGINS', '515.123.8080', '2007-05-24', 'AC_MGR', 12008.00, '', 0.00, 101, 110),
 (206, 'William', 'Gietz', 'WGIETZ', '515.123.8181', '2007-06-23', 'AC_ACCOUNT', 8300.00, '', 0.00, 205, 110);
 
--- --------------------------------------------------------
-
 --
--- Table structure for table `tbl_employee_history`
+-- Triggers `tbl_employees`
 --
+DELIMITER $$
+CREATE TRIGGER `tbl_employee_update` AFTER UPDATE ON `tbl_employees` FOR EACH ROW BEGIN
+    IF NEW.first_name != OLD.first_name THEN
+        INSERT INTO history (Id, FieldName, OldVal, NewVal, CreatedBy, CreatedAt)
+        VALUES (NEW.EMPLOYEE_ID, 'First Name', OLD.first_name, NEW.first_name, CURRENT_USER(), NOW());
+    END IF;
 
-CREATE TABLE `tbl_employee_history` (
-  `Id` int(11) NOT NULL,
-  `EmployeeId` int(11) DEFAULT NULL,
-  `FieldName` varchar(255) DEFAULT NULL,
-  `OldValue` varchar(255) DEFAULT NULL,
-  `NewValue` varchar(255) DEFAULT NULL,
-  `CreatedBy` varchar(255) DEFAULT NULL,
-  `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tbl_employee_history`
---
-
-INSERT INTO `tbl_employee_history` (`Id`, `EmployeeId`, `FieldName`, `OldValue`, `NewValue`, `CreatedBy`, `CreatedAt`) VALUES
-(1, 110, 'name', 'John', 'John', 'System', '2024-04-22 11:17:56'),
-(2, 110, 'email', 'john.doe@example.com', 'john.doe@example.com', 'System', '2024-04-22 11:17:56'),
-(3, 110, 'name', 'John', 'John', 'System', '2024-04-22 11:18:03'),
-(4, 110, 'email', 'john.doe@example.com', 'john.doe@example.com', 'System', '2024-04-22 11:18:03'),
-(5, 100, 'name', 'Steven', 'Steven', 'System', '2024-04-22 12:02:31'),
-(6, 100, 'email', 'SKING', 'SKING', 'System', '2024-04-22 12:02:31'),
-(7, 100, 'name', 'Steven', 'Steven', 'System', '2024-04-22 12:03:00'),
-(8, 100, 'email', 'SKING', 'SKING', 'System', '2024-04-22 12:03:00'),
-(9, 100, 'name', 'Steven', 'Steven', 'System', '2024-04-22 12:03:30'),
-(10, 100, 'email', 'SKING', 'SKING', 'System', '2024-04-22 12:03:30'),
-(11, 100, 'name', 'Steven', 'Steven', 'System', '2024-04-22 12:03:42'),
-(12, 100, 'email', 'SKING', 'SKING', 'System', '2024-04-22 12:03:42');
+    IF NEW.email != OLD.email THEN
+        INSERT INTO history (Id, FieldName, OldVal, NewVal, CreatedBy, CreatedAt)
+        VALUES (NEW.EMPLOYEE_ID, 'Email', OLD.email, NEW.email, CURRENT_USER(), NOW());
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -368,13 +343,16 @@ CREATE TABLE `tbl_jobhistory` (
 --
 
 INSERT INTO `tbl_jobhistory` (`EMPLOYEE_ID`, `START_DATE`, `END_DATE`, `JOB_ID`, `DEPARTMENT_ID`) VALUES
-(101, '0000-00-00', '0000-00-00', 'AC_ACCOUNT', 110),
-(102, '0000-00-00', '0000-00-00', 'IT_PROG', 60),
-(114, '0000-00-00', '0000-00-00', 'ST_CLERK', 50),
-(122, '0000-00-00', '0000-00-00', 'ST_CLERK', 50),
-(176, '0000-00-00', '0000-00-00', 'SA_REP', 80),
-(200, '0000-00-00', '0000-00-00', 'AD_ASST', 90),
-(201, '0000-00-00', '0000-00-00', 'MK_REP', 20);
+(102, '2001-01-13', '2006-07-24', 'IT_PROG', 60),
+(101, '1997-09-21', '2001-10-27', 'AC_ACCOUNT', 110),
+(101, '2001-10-28', '2005-03-15', 'AC_MGR', 110),
+(201, '2004-02-17', '2007-12-19', 'MK_REP', 20),
+(114, '2006-03-24', '2007-12-31', 'ST_CLERK', 50),
+(122, '2007-01-01', '2007-12-31', 'ST_CLERK', 50),
+(200, '1995-09-17', '2001-06-17', 'AD_ASST', 90),
+(176, '2006-03-24', '2006-12-31', 'SA_REP', 80),
+(176, '2007-01-01', '2007-12-31', 'SA_MAN', 80),
+(200, '2002-07-01', '2006-12-31', 'AC_ACCOUNT', 90);
 
 -- --------------------------------------------------------
 
@@ -532,16 +510,9 @@ ALTER TABLE `tbl_employees`
   ADD KEY `FK_ManagerID` (`MANAGER_ID`);
 
 --
--- Indexes for table `tbl_employee_history`
---
-ALTER TABLE `tbl_employee_history`
-  ADD PRIMARY KEY (`Id`);
-
---
 -- Indexes for table `tbl_jobhistory`
 --
 ALTER TABLE `tbl_jobhistory`
-  ADD PRIMARY KEY (`EMPLOYEE_ID`),
   ADD KEY `FK_JobID_JH` (`JOB_ID`),
   ADD KEY `FK_DepartmentID_JobHistory` (`DEPARTMENT_ID`);
 
@@ -569,16 +540,6 @@ ALTER TABLE `tbl_locations`
 --
 ALTER TABLE `tbl_region`
   ADD PRIMARY KEY (`REGION_ID`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `tbl_employee_history`
---
-ALTER TABLE `tbl_employee_history`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
