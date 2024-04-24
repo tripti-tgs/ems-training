@@ -60,7 +60,7 @@ const AddEmployee = () => {
   useEffect(() => {
     fetchDepartment();
     fetchEmployee();
-  }, [fetchDepartment, fetchEmployee]);
+  }, []);
 
   const onFinish = useCallback(
     async (values) => {
