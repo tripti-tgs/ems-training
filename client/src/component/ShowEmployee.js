@@ -60,9 +60,9 @@ const ShowEmployee = () => {
           </Link>
         </Button>
         <EmployeeSearch handleSearch={handleSearch} />
-        {info?.message && (
+        {info && (
           <Alert
-            message={info.message}
+            message={info}
             type="success"
             className="mb-3 mt-3"
             closable
