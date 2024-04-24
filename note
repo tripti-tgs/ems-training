@@ -1,0 +1,15 @@
+SELECT FIRST_NAME
+FROM tbl_employees
+WHERE DEPARTMENT_ID = (
+    SELECT DEPARTMENT_ID
+    FROM tbl_departments
+    WHERE LOCATION_ID = (
+        SELECT LOCATION_ID
+        FROM tbl_locations
+        WHERE COUNTRY_ID = (
+            SELECT COUNTRY_ID
+            FROM tbl_countries
+            WHERE COUNTRY_NAME = 'United Kingdom'
+        )
+    )
+);
