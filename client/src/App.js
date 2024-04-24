@@ -3,7 +3,6 @@ import {Fragment} from "react";
 import {
   BrowserRouter as Router,
   Route,
-  Switch,
   Routes,
 } from "react-router-dom";
 

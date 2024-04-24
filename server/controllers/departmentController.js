@@ -98,7 +98,6 @@ exports.deleteDepartment = async (req, res) => {
 
   try {
     const result = await Department.deleteDepartment(id);
-console.log(result)
     if (result && result.result === "error") {
       return res.status(400).json({ message: result.message });
     }

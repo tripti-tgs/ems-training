@@ -1,137 +1,95 @@
-import React, { useEffect, useState, Fragment, useCallback } from "react";
-import http from "../services/httpService";
-import { useParams, useNavigate } from "react-router-dom";
-import moment from "moment";
-import {
-  Button,
-  Cascader,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Mentions,
-  Select,
-  TreeSelect,
-  Alert,
-} from "antd";
-import dayjs from "dayjs";
+import React, { useEffect, useState, Fragment, useCallback } from 'react';
+import http from '../services/httpService';
+import { useParams, useNavigate } from 'react-router-dom';
+import moment from 'moment';
+import { Button, DatePicker, Form, Input, InputNumber, Select, Alert } from 'antd';
+import dayjs from 'dayjs';
+
 const { Option } = Select;
 
 const formItemLayout = {
   labelCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 6,
-    },
+    xs: { span: 24 },
+    sm: { span: 6 },
   },
   wrapperCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 14,
-    },
+    xs: { span: 24 },
+    sm: { span: 14 },
   },
 };
 
-function AddEmployee() {
+const AddEmployee = () => {
   const [dept, setDept] = useState([]);
-  const [employees, setEmployees] = useState();
   const [info, setInfo] = useState(null);
   const [form] = Form.useForm();
-  let { id } = useParams();
-
-  console.log(id);
-
-  let navigate = useNavigate();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   const fetchDepartment = useCallback(async () => {
     try {
-      let response = await http.get("/department");
-      setDept(response.data);
+      const response = await http.get('/department');
+      setDept(response);
       setInfo(null);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }, []);
 
-  useEffect(() => {
+  const fetchEmployee = useCallback(async () => {
     if (id) {
-      const fetchEmployee = async () => {
-        try {
-          let response = await http.get(`/employee/${id}`);
+      try {
+        const response = await http.get(`/employee/${id}`);
+        const { name, email, phone, dept_id, gender, dob } = response;
 
-          let { name, email, phone, dept_id, gender, dob } = response.data;
+        const formattedDob = dayjs(dob).format('YYYY-MM-DD');
 
-          dob = new Date(response.data.dob);
-
-          form.setFieldsValue({
-            name,
-            email,
-            phone,
-            dept_id: dept_id,
-            gender: gender.toString(),
-            dob: dayjs(dob),
-          });
-        } catch (err) {
-          console.log(err);
-        }
-      };
-
-      fetchEmployee();
+        form.setFieldsValue({
+          name,
+          email,
+          phone,
+          dept_id,
+          gender: gender.toString(),
+          dob: dayjs(formattedDob),
+        });
+      } catch (err) {
+        console.error(err);
+      }
     }
   }, [id, form]);
 
   useEffect(() => {
     fetchDepartment();
-  }, [fetchDepartment]);
+    fetchEmployee();
+  }, [fetchDepartment, fetchEmployee]);
 
   const onFinish = useCallback(
     async (values) => {
-      let date = `${values.dob.$y}-${
-        values.dob.$M < 9 ? `0${values.dob.$M + 1}` : `${values.dob.$M + 1}`
-      }-${
-        values.dob.$D < 10 ? `0${values.dob.$D}` : `${values.dob.$D}`
-      }`;
+      const date = moment(values?.dob?.$d).format('YYYY-MM-DD');
       
       values.dob = date;
-      // console.log(values);
       try {
-        if (id) {
-          let response = await http.put(`/employee/${id}`, values);
-          // setInfo(response.data);
-          alert("Employee details updated successfully");
-          navigate(`/`);
-        } else {
-          let response = await http.post("/employee/create", values);
-          // setInfo(response.data);
-          alert("Employee details add successfully");
-          navigate(`/`);
-        }
+        const response = id
+          ? await http.put(`/employee/${id}`, values)
+          : await http.post('/employee/create', values);
+        navigate('/');
       } catch (err) {
-        console.log("errr", err);
         setInfo(err?.response?.data?.message);
       }
     },
-    [id]
+    [id, navigate]
   );
 
   const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+    console.error('Failed:', errorInfo);
   };
 
-  console.log(form);
   return (
     <Fragment>
       <div className="my-4 text-center">
-        <h1>{id ? "Edit Employee" : "Add Employee"}</h1>
+        <h1>{id ? 'Edit Employee' : 'Add Employee'}</h1>
       </div>
       <div className="">
-        {info && (
-          <Alert message={info} type="success" className="mb-3" closable />
-        )}
+        {info && <Alert message={info} type="success" className="mb-3" closable />}
         <Form
           form={form}
           {...formItemLayout}
@@ -142,12 +100,7 @@ function AddEmployee() {
           <Form.Item
             label="Name"
             name="name"
-            rules={[
-              {
-                required: true,
-                message: "Please name!",
-              },
-            ]}
+            rules={[{ required: true, message: 'Please Enter Your Name' }]}
           >
             <Input />
           </Form.Item>
@@ -156,14 +109,8 @@ function AddEmployee() {
             label="Email"
             name="email"
             rules={[
-              {
-                required: true,
-                message: "Please Email",
-              },
-              {
-                type: "email",
-                message: "Please enter a valid email",
-              },
+              { required: true, message: 'Please Enter Your Email' },
+              { type: 'email', message: 'Please enter a valid email' },
             ]}
           >
             <Input />
@@ -173,28 +120,17 @@ function AddEmployee() {
             label="Phone"
             name="phone"
             rules={[
-              {
-                required: true,
-                message: "Please input your phone number",
-              },
-              {
-                pattern: /^[0-9]{10}$/,
-                message: "Please input a 10-digit phone number",
-              },
+              { required: true, message: 'Please Enter Your Phone Number' },
+              { pattern: /^[0-9]{10}$/, message: 'Please input a 10-digit phone number' },
             ]}
           >
-            <InputNumber style={{ width: "100%" }} />
+            <InputNumber style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
             label="Department"
             name="dept_id"
-            rules={[
-              {
-                required: true,
-                message: "Please Department",
-              },
-            ]}
+            rules={[{ required: true, message: 'Please Select Your Department' }]}
           >
             <Select placeholder="select your department">
               {dept.map((d) => (
@@ -208,12 +144,7 @@ function AddEmployee() {
           <Form.Item
             label="Gender"
             name="gender"
-            rules={[
-              {
-                required: true,
-                message: "Please select gender",
-              },
-            ]}
+            rules={[{ required: true, message: 'Please Select Your Gender' }]}
           >
             <Select placeholder="select your gender">
               <Option value="1">Male</Option>
@@ -224,22 +155,12 @@ function AddEmployee() {
           <Form.Item
             label="Birth of date"
             name="dob"
-            rules={[
-              {
-                required: true,
-                message: "Please Birth of Date",
-              },
-            ]}
+            rules={[{ required: true, message: 'Please Enter Your Birth of Date' }]}
           >
-            <DatePicker format="YYYY-MM-DD" maxDate={dayjs("2020-10-31")} />
+            <DatePicker format="YYYY-MM-DD" maxDate={dayjs('2020-10-31')} />
           </Form.Item>
 
-          <Form.Item
-            wrapperCol={{
-              offset: 6,
-              span: 16,
-            }}
-          >
+          <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
             <Button type="primary" htmlType="submit">
               Submit
             </Button>
@@ -248,6 +169,6 @@ function AddEmployee() {
       </div>
     </Fragment>
   );
-}
+};
 
 export default AddEmployee;

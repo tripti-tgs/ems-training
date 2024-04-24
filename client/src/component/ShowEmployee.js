@@ -1,47 +1,45 @@
-import React, { useEffect, useState, useCallback } from "react";
-import http from "../services/httpService";
-import { Space, Button, Alert } from "antd";
-import EmployeeColumns from "./EmployeeColumns";
-import { Link, useNavigate } from "react-router-dom";
-import EmployeeTable from "./EmployeeTable";
-import EmployeeSearch from "./EmployeeSearch";
+import React, { useEffect, useState, useCallback } from 'react';
+import http from '../services/httpService';
+import { Button, Alert } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
+import EmployeeTable from './EmployeeTable';
+import EmployeeSearch from './EmployeeSearch';
 
-function ShowEmployee() {
+const ShowEmployee = () => {
   const [employees, setEmployees] = useState([]);
   const [info, setInfo] = useState(null);
   const [search, setSearch] = useState(null);
   const navigate = useNavigate();
 
   const fetchEmployees = useCallback(async () => {
-    let url = search ? `/employee/empanddep${search}` : '/employee/empanddep';
+    const url = search ? `/employee/empanddep${search}` : '/employee/empanddep';
     try {
-      let response = await http.get(url);
-      setEmployees(response.data);
+      const response = await http.get(url);
+      setEmployees(response);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
-  }, [search]);
+  }, [search,employees]);
 
   useEffect(() => {
     fetchEmployees();
-  }, [employees]);
+  }, [fetchEmployees]);
 
   const handleDelete = useCallback(async (record) => {
     try {
-      let response = await http.deleteApi(`/employee/${record.id}`);
-      setInfo(response.data);
+      const response = await http.deleteApi(`/employee/${record.id}`);
+      setInfo(response?.message);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }, []);
 
   const handleEdit = useCallback(
     (recordId) => {
-      console.log("hello", recordId);
       try {
         navigate(`/edit/${recordId}`);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     },
     [navigate]
@@ -49,12 +47,12 @@ function ShowEmployee() {
 
   const handleSearch = (e) => {
     const { currentTarget: input } = e;
-    let str = `?search=${input.value}`;
+    const str = `?search=${input.value}`;
     setSearch(str);
   };
 
   return (
-    <div className="mt-4 ">
+    <div className="mt-4">
       <div className="px-5">
         <Button type="primary" className="mb-3">
           <Link to="/add" className="text-decoration-none">
@@ -64,7 +62,7 @@ function ShowEmployee() {
         <EmployeeSearch handleSearch={handleSearch} />
         {info?.message && (
           <Alert
-            message={info?.message}
+            message={info.message}
             type="success"
             className="mb-3 mt-3"
             closable
@@ -80,6 +78,6 @@ function ShowEmployee() {
       </div>
     </div>
   );
-}
+};
 
 export default ShowEmployee;

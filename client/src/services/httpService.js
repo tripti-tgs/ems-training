@@ -1,32 +1,57 @@
 import axios from "axios";
-// import auth from "./authServices.js";
+
 const baseURL = "http://localhost:4000";
 
+const httpService = axios.create({
+  baseURL: baseURL,
+});
 
-// function getApi(url) {
-//   let token = auth.getToken();
-//   let item = JSON.parse(token);
-//   return axios.get(baseURL + url, {
-//     headers: { Authorization: "bearer " + item || "dummayvalue" },
-//   });
-// }
+httpService.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      const { status, data } = error.response;
 
-function get(url) {
-  return axios.get(baseURL + url);
-}
-function post(url, obj) {
-  return axios.post(baseURL + url, obj);
-}
-function put(url, obj) {
-  
-   return axios.put(baseURL + url, obj);
-}
-function deleteApi(url) {
-  return axios.delete(baseURL + url);
-}
+      if (status === 500) {
+        alert('Internal Server Error: Please try again later.');
+      } else if (status === 401) {
+        alert('Unauthorized: Please login to continue.');
+      } else {
+        alert(`Error ${status}: ${data.message}`);
+      }
+    } else if (error.request) {
+      alert('Network Error: Please check your internet connection.');
+    } else {
+      alert('Error: Something went wrong. Please try again.');
+    }
+    return Promise.reject(error);
+  }
+);
+
+const get = async (url) => {
+    const response = await httpService.get(url);
+    return response.data;
+};
+
+const post = async (url, obj) => {
+    const response = await httpService.post(url, obj);
+    return response.data;
+};
+
+const put = async (url, obj) => {
+    const response = await httpService.put(url, obj);
+    return response.data;
+};
+
+const deleteApi = async (url) => {
+    const response = await httpService.delete(url);
+    return response.data;
+};
+
 export default {
   get,
-//   getApi,
   post,
   deleteApi,
   put,

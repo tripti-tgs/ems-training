@@ -34,10 +34,8 @@ exports.deleteEmployee = async (req, res) => {
   const { id } = req.params;
   try {
     const employee = await Employee.deleteEmployee(id);
-    console.log(employee);
     res.json("Employees delete successfully");
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -46,16 +44,9 @@ exports.createEmployee = async (req, res) => {
   try {
     const employee = req.body;
     const result = await Employee.addOrUpdateEmployee(employee);
-    // res.json(result)
-    // if (result && result[0].affectedRows > 0) {
-    //   
-    // } else {
-    //   res.status(400).json({ message: "Failed to add or update employee." });
-    // }
     res.json({ message: "Employee added or updated successfully!" });
 
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
