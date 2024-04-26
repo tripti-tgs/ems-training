@@ -448,7 +448,7 @@ SubQueries :
 
     72.	Write a SQL query to find those employees who get such a salary, which is the maximum of salaried employee, joining within January 1st, 2002 and December 31st, 2003. Return employee ID, first name, last name, salary, department name and city.
       
-  SELECT ep.EMPLOYEE_ID, ep.FIRST_NAME, ep.LAST_NAME, ep.SALARY, 
+        SELECT ep.EMPLOYEE_ID, ep.FIRST_NAME, ep.LAST_NAME, ep.SALARY, 
        (SELECT DEPARTMENT_NAME FROM Tbl_Departments WHERE DEPARTMENT_ID = ep.DEPARTMENT_ID) AS DEPARTMENT_NAME,
        CONCAT(
            (SELECT STREET_ADDRESS FROM tbl_locations WHERE LOCATION_ID = 
