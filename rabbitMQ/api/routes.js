@@ -28,10 +28,10 @@ router.post('/publish', jsonParser, async (req, res, next) => {
         const key = req.body.severity || 'anonymous.info';
 
         // Send message to exchange
-        channel.publish(exchange, key, Buffer.from(JSON.stringify(message)));
+        channel.publish(exchange, key, Buffer.from(message));
 
         console.log(" [x] Sent %s", message);
-        res.send('Data sent to RabbitMQ');
+        res.json('Data sent to RabbitMQ');
 
     } catch (error) {
         next(error); // Pass the error to the error handler middleware
