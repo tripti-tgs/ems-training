@@ -3,16 +3,24 @@ const { Op } = require("sequelize");
 const User = require("../models/user");
 const generateToken = require("../utils/jwt");
 
+const MDUser = require("../models/userMD");
+
 exports.register = async (req, res) => {
   const { username, email, password } = req.body;
-
   try {
-    const existingUser = await User.findOne({
-      where: {
-        [Op.or]: [{ username }, { email }],
-      },
-      attributes: { exclude: ["createdAt", "updatedAt"] },
-    });
+    let existingUser;
+    if (process.env.DB_CONNECTION == "MD") {
+      existingUser = await MDUser.findOne({
+        $or: [{ username }, { email }],
+      });
+    } else {
+      existingUser = await User.findOne({
+        where: {
+          [Op.or]: [{ username }, { email }],
+        },
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+    }
 
     if (existingUser) {
       if (existingUser.username === username && existingUser.email === email) {
@@ -24,19 +32,16 @@ exports.register = async (req, res) => {
       }
     }
 
-    const user = await User.create(
-      {
-        username,
-        email,
-        password,
-      },
-      {
-        fields: ["username", "email", "password"],
-        attributes: { exclude: ["createdAt", "updatedAt"] },
-      }
-    );
 
-    res.status(201).json({ message: "User registered successfully!", user });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const userInfo = await (process.env.DB_CONNECTION === "MD" ? MDUser : User).create({
+      username,
+      email,
+      password: hashedPassword,
+    });
+    res.status(201).json({ message: "User registered successfully!"});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -45,12 +50,16 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { username, password } = req.body;
-
   try {
-    const user = await User.findOne({
-      where: { username },
-      attributes: { exclude: ["createdAt", "updatedAt"] },
-    });
+    let user;
+    if (process.env.DB_CONNECTION == "MD") {
+      user = await MDUser.findOne({ username });
+    } else {
+      user = await User.findOne({
+        where: { username },
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+    }
 
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });

@@ -2,21 +2,27 @@
 URL: http://localhost:4000/user/register
 Body: 
 {
-    "username": "tripti14562",
-    "email": "tri1pti678@gmail.com",
-    "password": "090807" 
+    "username":"nikyeTriy01",
+    "email"  :"tripti12y346y78f9@gmail.com",
+    "password":"12345678" 
 }
 Response: 
 {
-    "message": "User registered successfully!"
+    "message": "User registered successfully!",
+    "userInfo": {
+        "id": 19,
+        "username": "nikyeTriy01",
+        "email": "tripti12y346y78f9@gmail.com",
+        "password": "$2b$10$YvhZ30EZteYeCnyjTtHc8eYT99amIfL/txzQNeY76ZHmzwErCH3VS"
+    }
 }
 
 2. User Login
 URL: http://localhost:4000/user/login
 Body: 
 {
-    "username": "tripti14562",
-    "password": "090807" 
+    "username":"nikeTri01",
+    "password":"12345678" 
 }
 Response: 
 {
@@ -33,24 +39,27 @@ Body:
 }
 Response: 
 {
-    "name": "HR",
+    "id": 26,
+    "name": "DMS-ts1",
     "isDeleted": 0,
-    "created_by": 7,
-    "created_at": "2024-04-16T12:00:00.000Z",
-    "id": "12345"
+    "created_by": 13,
+    "created_at": "2024-04-29T12:09:14.389Z"
 }
 
 4. Department List
 URL: http://localhost:4000/department/
 Response: 
 [
-    {
-        "id": "12345",
-        "name": "HR",
-        "isDeleted": 0,
-        "created_by": 7,
-        "created_at": "2024-04-16T12:00:00.000Z",
-        "updated_at": "2024-04-16T12:00:00.000Z"
+     {
+        "id": 1,
+        "name": "Tech",
+        "isDeleted": 1,
+        "created_at": null,
+        "updated_at": null,
+        "deleted_at": "2024-04-16T09:55:42.000Z",
+        "created_by": 5,
+        "updated_by": null,
+        "deleted_by": 7
     }
 ]
 
@@ -62,20 +71,27 @@ Body:
 }
 Response: 
 {
-    "_id": "12345",
-    "name": "HR Management",
+    "id": 2,
+    "name": "DMS-ts1",
     "isDeleted": 0,
-    "created_by": 7,
-    "created_at": "2024-04-16T12:00:00.000Z",
-    "updated_at": "2024-04-16T12:30:00.000Z"
+    "created_at": "2024-04-16T09:16:41.000Z",
+    "updated_at": "2024-04-29T12:10:20.180Z",
+    "deleted_at": null,
+    "created_by": 5,
+    "updated_by": 13,
+    "deleted_by": null
 }
 
 6. Department Delete
 URL: http://localhost:4000/department/:id
 Response: 
 {
+    "message": "Department is used in employees table"
+}
+{
     "message": "Department deleted successfully"
 }
+
 
 7. Employee Create
 URL: http://localhost:4000/employee/create

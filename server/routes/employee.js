@@ -6,7 +6,7 @@ const employeeController = require("../controllers/employeeController");
 
 const router = express.Router();
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
 router.post(
   "/create",
@@ -16,7 +16,7 @@ router.post(
     body("phone").isInt().withMessage("Invalid phone number"),
     body("gender").isInt().withMessage("Invalid gender"),
     body("dob").isDate().withMessage("Invalid date of birth"),
-    body("dept_id").isInt().withMessage("Invalid department ID"),
+    body("dept_id").notEmpty().withMessage("Invalid department ID"),
   ],
   validateMiddleware,
   employeeController.createEmployee
@@ -50,7 +50,7 @@ router.put(
     body("phone").isInt().withMessage("Invalid phone number"),
     body("gender").isInt().withMessage("Invalid gender"),
     body("dob").isDate().withMessage("Invalid date of birth"),
-    body("dept_id").isInt().withMessage("Invalid department ID"),
+    body("dept_id").notEmpty().withMessage("Invalid department ID"),
   ],
   validateMiddleware,
   employeeController.updateEmployee

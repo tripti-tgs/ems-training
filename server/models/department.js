@@ -46,4 +46,5 @@ Department.deleteDepartment = async (deptId) => {
   });
   return results;
 };
+
 module.exports = Department;

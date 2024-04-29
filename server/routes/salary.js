@@ -11,7 +11,7 @@ router.use(authMiddleware);
 router.post(
   "/create",
   [
-    body("emp_id").isInt().withMessage("Invalid employee ID"),
+    body("emp_id").notEmpty().withMessage("Invalid employee ID"),
     body("salary").isDecimal().withMessage("Invalid salary"),
     body("date").isDate().withMessage("Invalid date"),
   ],
@@ -19,14 +19,14 @@ router.post(
   salaryController.createSalary
 );
 
-router.get('/empandsalary', salaryController.getEmpAndSalary);
+// router.get('/empandsalary', salaryController.getEmpAndSalary);
 
 router.get("/", salaryController.getAllSalaries);
 
 router.put(
   "/:id",
   [
-    body("emp_id").isInt().withMessage("Invalid employee ID"),
+    body("emp_id").notEmpty().withMessage("Invalid employee ID"),
     body("salary").isDecimal().withMessage("Invalid salary"),
     body("date").isDate().withMessage("Invalid date"),
   ],
