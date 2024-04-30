@@ -64,105 +64,30 @@ exports.createEmployeeAndDept = async (req, res) => {
   const { name, email, phone, gender, dob, dept_name } = req.body;
   const createdBy = req.userData.userId;
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    let existingEmail;
-    if (process.env.DB_CONNECTION == "MD") {
-      existingEmail = await MDEmployee.findOne({ email }).session(session);
-    } else {
-      existingEmail = await Employee.findOne({
-        where: { email },
-        transaction: session,
-      });
-    }
-
-    if (existingEmail) {
-      await session.abortTransaction();
-      session.endSession();
-      return res
-        .status(400)
-        .json({ message: "Employee with this email already exists." });
-    }
-
-    let existingDepartment;
-    if (process.env.DB_CONNECTION == "MD") {
-      existingDepartment = await MDDepartment.findOne({
-        name: dept_name,
-      }).session(session);
-    } else {
-      existingDepartment = await Department.findOne({
-        where: { name: dept_name },
-        transaction: session,
-      });
-    }
-
-    if (existingDepartment) {
-      await session.abortTransaction();
-      session.endSession();
-      return res
-        .status(400)
-        .json({ message: "Department with this name already exists." });
-    }
-
-    let department;
-    if (process.env.DB_CONNECTION == "MD") {
-      department = await MDDepartment.create(
-        [{ name: dept_name, isDeleted: 0, created_by: createdBy, created_at: new Date() }],
-        { session }
-      );
-    } else {
-      department = await Department.create(
-        {
-          name: dept_name,
-          isDeleted: 0,
-          created_by: createdBy,
-          created_at: new Date(),
-        },
-        { transaction: session }
-      );
-    }
-    let dp_id = department[0]._id.valueOf() || department.id;
-
-    if (!dp_id) {
-      await session.abortTransaction();
-      session.endSession();
-      return res.status(400).json({ message: "Department is not created!" });
-    }
-
-    let employee;
-    const employeeData = [{
+  if (process.env.DB_CONNECTION == "MD") {
+    await createEmployeeAndDeptMongoDB(
+      req,
+      res,
+      createdBy,
       name,
       email,
       phone,
       gender,
       dob,
-      isDeleted: 0,
-      dept_id: dp_id,
-      created_by: createdBy,
-      created_at: new Date()
-    }];
-
-    if (process.env.DB_CONNECTION == "MD") {
-      employee = await MDEmployee.create(employeeData, { session });
-    } else {
-      employee = await Employee.create(
-        {
-          ...employeeData, 
-        },
-        { transaction: session }
-      );
-    }
-
-    await session.commitTransaction();
-    session.endSession();
-
-    res.json(employee);
-  } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+      dept_name
+    );
+  } else {
+    await createEmployeeAndDeptSequelize(
+      req,
+      res,
+      createdBy,
+      name,
+      email,
+      phone,
+      gender,
+      dob,
+      dept_name
+    );
   }
 };
 
@@ -368,7 +293,7 @@ exports.deleteEmployee = async (req, res) => {
       if (!employee) {
         return res.status(404).json({ message: "Employee not found" });
       }
-      await Employee.update({
+      await employee.update({
         isDeleted: 1,
         deleted_by: deletedBy,
         deleted_at: new Date(),
@@ -380,3 +305,160 @@ exports.deleteEmployee = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+async function createEmployeeAndDeptMongoDB(
+  req,
+  res,
+  createdBy,
+  name,
+  email,
+  phone,
+  gender,
+  dob,
+  dept_name
+) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    let existingEmail = await MDEmployee.findOne({ email }).session(session);
+    if (existingEmail) {
+      await session.abortTransaction();
+      session.endSession();
+      return res
+        .status(400)
+        .json({ message: "Employee with this email already exists." });
+    }
+
+    let existingDepartment = await MDDepartment.findOne({
+      name: dept_name,
+    }).session(session);
+    if (existingDepartment) {
+      await session.abortTransaction();
+      session.endSession();
+      return res
+        .status(400)
+        .json({ message: "Department with this name already exists." });
+    }
+
+    const department = await MDDepartment.create(
+      [
+        {
+          name: dept_name,
+          isDeleted: 0,
+          created_by: createdBy,
+          created_at: new Date(),
+        },
+      ],
+      { session }
+    );
+
+    let dp_id = department[0]._id.valueOf();
+
+    if (!dp_id) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({ message: "Department is not created!" });
+    }
+
+    const employeeData = {
+      name,
+      email,
+      phone,
+      gender,
+      dob,
+      isDeleted: 0,
+      dept_id: dp_id,
+      created_by: createdBy,
+      created_at: new Date(),
+    };
+
+    const employee = await MDEmployee.create([employeeData], { session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.json(employee);
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+async function createEmployeeAndDeptSequelize(
+  req,
+  res,
+  createdBy,
+  name,
+  email,
+  phone,
+  gender,
+  dob,
+  dept_name
+) {
+  let transaction = await sequelize.transaction();
+
+  try {
+    let existingEmail = await Employee.findOne({
+      where: { email },
+      transaction,
+    });
+    if (existingEmail) {
+      await transaction.rollback();
+      return res
+        .status(400)
+        .json({ message: "Employee with this email already exists." });
+    }
+
+    let existingDepartment = await Department.findOne({
+      where: { name: dept_name },
+      transaction,
+    });
+    if (existingDepartment) {
+      await transaction.rollback();
+      return res
+        .status(400)
+        .json({ message: "Department with this name already exists." });
+    }
+
+    const department = await Department.create(
+      {
+        name: dept_name,
+        isDeleted: 0,
+        created_by: createdBy,
+        created_at: new Date(),
+      },
+      { transaction }
+    );
+
+    let dp_id = department.id;
+
+    if (!dp_id) {
+      await transaction.rollback();
+      return res.status(400).json({ message: "Department is not created!" });
+    }
+
+    const employeeData = {
+      name,
+      email,
+      phone,
+      gender,
+      dob,
+      isDeleted: 0,
+      dept_id: dp_id,
+      created_by: createdBy,
+      created_at: new Date(),
+    };
+
+    const employee = await Employee.create(employeeData, { transaction });
+
+    await transaction.commit();
+
+    res.json(employee);
+  } catch (error) {
+    await transaction.rollback();
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
