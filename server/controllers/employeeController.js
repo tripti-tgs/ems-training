@@ -66,7 +66,6 @@ exports.createEmployeeAndDept = async (req, res) => {
 
   const session = await mongoose.startSession();
   session.startTransaction();
-  const transaction = await sequelize.transaction();
   try {
     let existingEmail;
     if (process.env.DB_CONNECTION == "MD") {
@@ -74,7 +73,7 @@ exports.createEmployeeAndDept = async (req, res) => {
     } else {
       existingEmail = await Employee.findOne({
         where: { email },
-        transaction,
+        transaction: session,
       });
     }
 
@@ -94,7 +93,7 @@ exports.createEmployeeAndDept = async (req, res) => {
     } else {
       existingDepartment = await Department.findOne({
         where: { name: dept_name },
-        transaction,
+        transaction: session,
       });
     }
 
@@ -109,7 +108,8 @@ exports.createEmployeeAndDept = async (req, res) => {
     let department;
     if (process.env.DB_CONNECTION == "MD") {
       department = await MDDepartment.create(
-        { name: dept_name, isDeleted: 0,created_by: createdBy, created_at: new Date() }
+        [{ name: dept_name, isDeleted: 0, created_by: createdBy, created_at: new Date() }],
+        { session }
       );
     } else {
       department = await Department.create(
@@ -119,18 +119,19 @@ exports.createEmployeeAndDept = async (req, res) => {
           created_by: createdBy,
           created_at: new Date(),
         },
-         transaction 
+        { transaction: session }
       );
     }
-    let dp_id = department._id.valueOf() || department.id;
+    let dp_id = department[0]._id.valueOf() || department.id;
+
     if (!dp_id) {
       await session.abortTransaction();
       session.endSession();
-      return res.status(400).json({ message: "Department is not Create!" });
+      return res.status(400).json({ message: "Department is not created!" });
     }
 
     let employee;
-    const employeeData = {
+    const employeeData = [{
       name,
       email,
       phone,
@@ -140,30 +141,31 @@ exports.createEmployeeAndDept = async (req, res) => {
       dept_id: dp_id,
       created_by: createdBy,
       created_at: new Date()
-    };
+    }];
+
     if (process.env.DB_CONNECTION == "MD") {
-      employee = await MDEmployee.create(employeeData);
+      employee = await MDEmployee.create(employeeData, { session });
     } else {
       employee = await Employee.create(
         {
-          employeeData
+          ...employeeData, 
         },
-        transaction
+        { transaction: session }
       );
     }
 
     await session.commitTransaction();
     session.endSession();
-    await transaction.commit();
+
     res.json(employee);
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    await transaction.rollback();
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 exports.getOneEmployees = async (req, res) => {
   const { id } = req.params;
