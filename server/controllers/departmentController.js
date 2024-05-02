@@ -131,6 +131,7 @@ exports.deleteDepartment = async (req, res) => {
         { isDeleted: 1, deleted_by: deletedBy, deleted_at: new Date() }
       );
       res.json({ message: "Department deleted successfully" });
+      
     } else {
       const result = await Department.deleteDepartment(id);
       if (result && result.result === "error") {

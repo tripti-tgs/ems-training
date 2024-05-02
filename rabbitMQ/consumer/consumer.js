@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const router = express.Router();
 const jsonParser = bodyParser.json();
 const { connectRabbitMQ } = require("../config/db");
+
 router.get("/get", jsonParser, async (req, res) => {
   try {
     // Parse severity from request

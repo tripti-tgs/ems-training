@@ -1,47 +1,13 @@
-SELECT FIRST_NAME
-FROM tbl_employees
-WHERE DEPARTMENT_ID = (
-    SELECT DEPARTMENT_ID
-    FROM tbl_departments
-    WHERE LOCATION_ID = (
-        SELECT LOCATION_ID
-        FROM tbl_locations
-        WHERE COUNTRY_ID = (
-            SELECT COUNTRY_ID
-            FROM tbl_countries
-            WHERE COUNTRY_NAME = 'United Kingdom'
-        )
-    )
-);
-http://localhost:3000/get?severity=error.info
-http://localhost:3000/api/publish
-{
-    "message": "Nice to meet you,Tripti sharma",
-    "severity":"error.info"
+Do this:
+
+function isValidaUrl(url) {
+const parsed = new URL(url)
+return [‘https:’, ‘http:’].includes(parsed.protocol)
 }
+<a href={isValidUrl(url) ? url : ‘#’}>Click here!</a>
 
+Don’t do this:
 
-    {
-        "_id": "662f770f2be5c67731afeb9e",
-        "name": "DMS-ts3",
-        "email": "tr12567eeu30f3@gmail.com",
-        "phone": 987654321,
-        "gender": 0,
-        "dob": "2022-10-10T00:00:00.000Z",
-        "dept_id": {
-            "_id": "662f660b256c75998633dee0",
-            "name": "DMS-ts",
-            "isDeleted": 1,
-            "created_at": "2024-04-29T09:19:07.854Z",
-            "created_by": "662f5afcfaff64a7e3f29df0",
-            "__v": 0,
-            "updated_at": "2024-04-29T09:24:50.695Z",
-            "updated_by": "662f5afcfaff64a7e3f29df0",
-            "deleted_at": "2024-04-29T09:26:09.706Z",
-            "deleted_by": "662f5afcfaff64a7e3f29df0"
-        },
-        "isDeleted": 0,
-        "created_at": "2024-04-29T10:31:43.400Z",
-        "created_by": "662f5afcfaff64a7e3f29df0",
-        "__v": 0
-    },
+<a href={userControlledUrl}>Click here!</a>
+
+ex: <a href={javascript:alert(document.cookie}>Click here!</a>
