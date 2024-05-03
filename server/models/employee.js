@@ -14,6 +14,7 @@ const Employee = sequelize.define('employee', {
   phone: DataTypes.INTEGER,
   gender: DataTypes.TINYINT,
   dob: DataTypes.DATE,
+  emp_img:DataTypes.BLOB,
   dept_id: DataTypes.INTEGER,
   isDeleted: DataTypes.TINYINT,
   created_at: DataTypes.DATE,

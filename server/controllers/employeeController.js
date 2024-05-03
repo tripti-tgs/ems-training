@@ -4,56 +4,61 @@ const Department = require("../models/department");
 const validateMiddleware = require("../middleware/validation");
 const sequelize = require("../db/index");
 const mongoose = require("mongoose");
-
+const path = require("path");
 const MDDepartment = require("../models/departmentMD");
 const MDEmployee = require("../models/EmployeeMD");
+const fs = require("fs");
 
 exports.createEmployee = async (req, res) => {
   const { name, email, phone, gender, dob, dept_id } = req.body;
   const createdBy = req.userData.userId;
 
   try {
-    if (process.env.DB_CONNECTION == "MD") {
-      // For MongoDB
-      const findEmail = await MDEmployee.findOne({ email });
-      if (findEmail) {
-        return res
-          .status(400)
-          .json({ message: "Employee already exists with this email." });
-      }
+    // let emp_img = req.file.filename;
+    console.log(req)
+      // let emp_img = req.file.filename;
+    // if (process.env.DB_CONNECTION == "MD") {
+    //   // For MongoDB
+    //   const findEmail = await MDEmployee.findOne({ email });
+    //   if (findEmail) {
+    //     return res
+    //       .status(400)
+    //       .json({ message: "Employee already exists with this email." });
+    //   }
 
-      const employee = await MDEmployee.create({
-        name,
-        email,
-        phone,
-        gender,
-        dob,
-        dept_id,
-        isDeleted: 0,
-        created_by: createdBy,
-        created_at: new Date(),
-      });
-      return res.json(employee);
-    } else {
-      const findEmail = await Employee.findOne({ where: { email } });
-      if (findEmail) {
-        return res
-          .status(400)
-          .json({ message: "Employee already exists with this email." });
-      }
-      const employee = await Employee.create({
-        name,
-        email,
-        phone,
-        gender,
-        dob,
-        dept_id,
-        isDeleted: 0,
-        created_by: createdBy,
-        created_at: new Date(),
-      });
-      return res.json(employee);
-    }
+    //   const employee = await MDEmployee.create({
+    //     name,
+    //     email,
+    //     phone,
+    //     gender,
+    //     dob,
+    //     dept_id,
+    //     isDeleted: 0,
+    //     created_by: createdBy,
+    //     created_at: new Date(),
+    //   });
+    //   return res.json(employee);
+    // } else {
+    //   const findEmail = await Employee.findOne({ where: { email } });
+    //   if (findEmail) {
+    //     return res
+    //       .status(400)
+    //       .json({ message: "Employee already exists with this email." });
+    //   }
+    //   const employee = await Employee.create({
+    //     name,
+    //     email,
+    //     phone,
+    //     gender,
+    //     dob,
+    //     dept_id,
+    //     isDeleted: 0,
+    //     emp_img,
+    //     created_by: createdBy,
+    //     created_at: new Date(),
+    //   });
+    //   return res.json(employee);
+    // }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -91,7 +96,6 @@ exports.createEmployeeAndDept = async (req, res) => {
   }
 };
 
-
 exports.getOneEmployees = async (req, res) => {
   const { id } = req.params;
   try {
@@ -125,6 +129,10 @@ exports.getOneEmployees = async (req, res) => {
         },
       });
     }
+    const filePath =
+      employee.emp_img && `http://localhost:8080/upload/${employee.emp_img}`;
+
+    employee.emp_img = filePath;
 
     res.json(employee);
   } catch (error) {
@@ -213,6 +221,12 @@ exports.getAllEmployees = async (req, res) => {
     }
 
     arr = arr.length == 0 ? employees : arr;
+    arr.map((e) => {
+      const filePath = e.emp_img && `http://localhost:8080/upload/${e.emp_img}`;
+
+      return (e.emp_img = filePath);
+    });
+
     res.json(arr);
   } catch (error) {
     console.error(error);
@@ -227,6 +241,8 @@ exports.updateEmployee = async (req, res) => {
 
   try {
     let employee;
+    const emp_img = req.file.filename;
+    console.log(name, email, phone, gender, dob, dept_id, emp_img);
     if (process.env.DB_CONNECTION === "MD") {
       employee = await MDEmployee.findByIdAndUpdate(
         id,
@@ -237,6 +253,7 @@ exports.updateEmployee = async (req, res) => {
           gender,
           dob,
           dept_id,
+
           updated_at: new Date(),
           updated_by: updatedBy,
         },
@@ -255,6 +272,7 @@ exports.updateEmployee = async (req, res) => {
         gender,
         dob,
         dept_id,
+        emp_img,
         updated_at: new Date(),
         updated_by: updatedBy,
       });

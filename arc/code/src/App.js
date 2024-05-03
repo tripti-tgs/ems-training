@@ -19,6 +19,7 @@ const Debounce = lazy(() => import("./component/Debounce"));
 function App() {
   return (
     <MyProvider>
+     
       <Router>
         <Navbar />
         <Routes>

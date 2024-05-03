@@ -10,7 +10,9 @@ const cors = require('cors');
 require('dotenv').config();
 const bodyparser = require('body-parser')
 
+
 const app = express();
+
 
 app.use(bodyparser.json())
 app.use(cors())
@@ -19,6 +21,7 @@ app.use(cors())
 
 
 app.use('/user', userRoutes);
+// app.use(express.static('http://localhost:8080/'));
 app.use('/employee', employeeRoutes);
 
 

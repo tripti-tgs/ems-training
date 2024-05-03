@@ -17,7 +17,7 @@ const generateToken = (user) => {
       email: user.email
     },
     'secretKey',
-    { expiresIn: '1h' }
+    // { expiresIn: '1h' }
   );
 };
 
