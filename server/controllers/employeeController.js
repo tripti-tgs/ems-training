@@ -14,51 +14,49 @@ exports.createEmployee = async (req, res) => {
   const createdBy = req.userData.userId;
 
   try {
-    // let emp_img = req.file.filename;
-    console.log(req)
-      // let emp_img = req.file.filename;
-    // if (process.env.DB_CONNECTION == "MD") {
-    //   // For MongoDB
-    //   const findEmail = await MDEmployee.findOne({ email });
-    //   if (findEmail) {
-    //     return res
-    //       .status(400)
-    //       .json({ message: "Employee already exists with this email." });
-    //   }
+    let emp_img = req.file.filename;
+    if (process.env.DB_CONNECTION == "MD") {
+      // For MongoDB
+      const findEmail = await MDEmployee.findOne({ email });
+      if (findEmail) {
+        return res
+          .status(400)
+          .json({ message: "Employee already exists with this email." });
+      }
 
-    //   const employee = await MDEmployee.create({
-    //     name,
-    //     email,
-    //     phone,
-    //     gender,
-    //     dob,
-    //     dept_id,
-    //     isDeleted: 0,
-    //     created_by: createdBy,
-    //     created_at: new Date(),
-    //   });
-    //   return res.json(employee);
-    // } else {
-    //   const findEmail = await Employee.findOne({ where: { email } });
-    //   if (findEmail) {
-    //     return res
-    //       .status(400)
-    //       .json({ message: "Employee already exists with this email." });
-    //   }
-    //   const employee = await Employee.create({
-    //     name,
-    //     email,
-    //     phone,
-    //     gender,
-    //     dob,
-    //     dept_id,
-    //     isDeleted: 0,
-    //     emp_img,
-    //     created_by: createdBy,
-    //     created_at: new Date(),
-    //   });
-    //   return res.json(employee);
-    // }
+      const employee = await MDEmployee.create({
+        name,
+        email,
+        phone,
+        gender,
+        dob,
+        dept_id,
+        isDeleted: 0,
+        created_by: createdBy,
+        created_at: new Date(),
+      });
+      return res.json(employee);
+    } else {
+      const findEmail = await Employee.findOne({ where: { email } });
+      if (findEmail) {
+        return res
+          .status(400)
+          .json({ message: "Employee already exists with this email." });
+      }
+      const employee = await Employee.create({
+        name,
+        email,
+        phone,
+        gender,
+        dob,
+        dept_id,
+        isDeleted: 0,
+        emp_img,
+        created_by: createdBy,
+        created_at: new Date(),
+      });
+      return res.json(employee);
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });

@@ -44,10 +44,8 @@ const AddEmployee = () => {
 
     try {
       await http.post("/employee/create", data);
-      // Handle success, maybe redirect or show a success message
     } catch (err) {
       console.error("Error adding employee:", err);
-      // Handle error, maybe show an error message
     }
   };
 

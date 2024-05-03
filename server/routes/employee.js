@@ -7,13 +7,13 @@ const employeeController = require("../controllers/employeeController");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs").promises;
-const Resumable = require("resumablejs");
 const router = express.Router();
 
 router.use(authMiddleware);
 
 
 const storage = multer.diskStorage({
+ 
   destination: (res, file, cb) => {
     const uploadPath = "D:/EMS_images/upload";
     fs.mkdir(uploadPath, { recursive: true })
@@ -29,7 +29,7 @@ const storage = multer.diskStorage({
   //   if(ext != ".png" && ext != ".jpg" && ext != ".gif" )
   // }
 });
-const upload = multer({ storage: storage });
+let upload = multer({ storage: storage });
 
 router.post(
   "/create",
