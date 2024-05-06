@@ -12,8 +12,11 @@ const fs = require("fs");
 exports.createEmployee = async (req, res) => {
   const { name, email, phone, gender, dob, dept_id } = req.body;
   const createdBy = req.userData.userId;
-
+console.log(name, email, phone, gender, dob, dept_id );
   try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded.'});
+    }
     let emp_img = req.file.filename;
     if (process.env.DB_CONNECTION == "MD") {
       // For MongoDB
@@ -128,7 +131,7 @@ exports.getOneEmployees = async (req, res) => {
       });
     }
     const filePath =
-      employee.emp_img && `http://localhost:8080/upload/${employee.emp_img}`;
+      employee.emp_img && `${process.env.IMAGE_PORT}${employee.emp_img}`;
 
     employee.emp_img = filePath;
 
@@ -183,7 +186,15 @@ exports.getEmpAndDep = async (req, res) => {
     }
 
     arr = arr ? arr : employees;
+ 
+    arr.map((e) => {
+      const filePath = e.emp_img && `${process.env.IMAGE_PORT}${e.emp_img}`;
+
+      return (e.emp_img = filePath);
+    });
+
     res.json(arr);
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -220,7 +231,7 @@ exports.getAllEmployees = async (req, res) => {
 
     arr = arr.length == 0 ? employees : arr;
     arr.map((e) => {
-      const filePath = e.emp_img && `http://localhost:8080/upload/${e.emp_img}`;
+      const filePath = e.emp_img && `${process.env.IMAGE_PORT}${e.emp_img}`;
 
       return (e.emp_img = filePath);
     });

@@ -10,12 +10,12 @@ const EmployeeColumns = (handleEdit, handleDelete) => {
     },
     {
       title: "Image",
-      dataIndex: "url",
+      dataIndex: "emp_img",
       key: "emp_img",
       render: (text, record) =>
         record?.emp_img !=="" ? (
           <img
-            src={`http://localhost:8080/upload/${record?.emp_img} `}
+            src={`${record?.emp_img} `}
             alt={record.name}
             style={{ maxWidth: "100px" }}
           />

@@ -1,21 +1,35 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:5000";
-let token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJ1c2VybmFtZSI6Im5pa2VUcmkwMSIsImVtYWlsIjoidHJpcHRpMTIzNDY3ODk4QGdtYWlsLmNvbSIsImlhdCI6MTcxNDcxNTcxMX0.L4lZH3nQEbSsukG1yVWgRa0y18A1qWNECibG-2GlW98";
-
-const httpService = axios.create({
-  baseURL: baseURL,
+let axiosInstance = axios.create({
+  baseURL: "http://localhost:5000",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-httpService.interceptors.response.use(
-  (response) => {
-    return response;
+// Add a request interceptor
+axiosInstance.interceptors.request.use(
+  function (config) {
+    const token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJ1c2VybmFtZSI6Im5pa2VUcmkwMSIsImVtYWlsIjoidHJpcHRpMTIzNDY3ODk4QGdtYWlsLmNvbSIsImlhdCI6MTcxNDk3NzEzM30.TbJfG1kfaYa9GoXLBMDaT-IrrgQTGyzBmFQWL8ZEc-k";
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
   },
-  (error) => {
+  function (error) {
+    return Promise.reject(error);
+  }
+);
+
+// Add a response interceptor
+axiosInstance.interceptors.response.use(
+  function (response) {
+    return response.data;
+  },
+  function (error) {
     if (error.response) {
       const { status, data } = error.response;
-
       if (status === 500) {
         alert("Internal Server Error: Please try again later.");
       } else if (status === 401) {
@@ -31,35 +45,40 @@ httpService.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-let header = {
-  headers: {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  },
-};
+
+// Functions for HTTP methods
 const get = async (url) => {
-  const response = await httpService.get(url, header);
-  return response.data;
+  const response = await axiosInstance.get(url);
+  return response;
 };
 
-const post = async (url, obj) => {
-  const response = await httpService.post(url, obj, header);
-  return response.data;
+const post = async (url, data) => {
+  console.log("data", data);
+  const response = await axiosInstance.post(url, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response;
 };
 
-const put = async (url, obj) => {
-  const response = await httpService.put(url, obj, header);
-  return response.data;
+const put = async (url, data) => {
+  const response = await axiosInstance.put(url, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    }
+});
+  return response;
 };
 
 const deleteApi = async (url) => {
-  const response = await httpService.delete(url, header);
-  return response.data;
+  const response = await axiosInstance.delete(url);
+  return response;
 };
 
 export default {
   get,
   post,
-  deleteApi,
   put,
+  deleteApi,
 };

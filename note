@@ -1,16 +1,16 @@
-Do this:
+// Do this:
 
-function isValidaUrl(url) {
-const parsed = new URL(url)
-return [‘https:’, ‘http:’].includes(parsed.protocol)
-}
-<a href={isValidUrl(url) ? url : ‘#’}>Click here!</a>
+// function isValidaUrl(url) {
+// const parsed = new URL(url)
+// return [‘https:’, ‘http:’].includes(parsed.protocol)
+// }
+// <a href={isValidUrl(url) ? url : ‘#’}>Click here!</a>
 
-Don’t do this:
+// Don’t do this:
 
-<a href={userControlledUrl}>Click here!</a>
+// <a href={userControlledUrl}>Click here!</a>
 
-ex: <a href={javascript:alert(document.cookie}>Click here!</a>
+// ex: <a href={javascript:alert(document.cookie}>Click here!</a>
 
 
 import React, { useEffect, useState, Fragment, useCallback } from "react";
@@ -235,3 +235,9 @@ const AddEmployee = () => {
 };
 
 export default AddEmployee;
+
+
+for (let key in formData) {
+  formDataToSend.append(key, formData[key]);
+}
+formDataToSend.dob = moment(formDataToSend.dob).format("YYYY-MM-DD");

@@ -24,10 +24,6 @@ const storage = multer.diskStorage({
     const filename = file.originalname;
     cb(null, filename);
   },
-  // fileFilter:(req,file,cb)=>{
-  //   let ext =path.extname(file.originalname);
-  //   if(ext != ".png" && ext != ".jpg" && ext != ".gif" )
-  // }
 });
 let upload = multer({ storage: storage });
 
