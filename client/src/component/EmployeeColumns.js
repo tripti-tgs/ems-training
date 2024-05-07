@@ -13,13 +13,15 @@ const EmployeeColumns = (handleEdit, handleDelete) => {
       dataIndex: "emp_img",
       key: "emp_img",
       render: (text, record) =>
-        record?.emp_img !=="" ? (
+        record?.emp_img !== "" ? (
           <img
-            src={`${record?.emp_img} `}
+            src={`${record?.emp_img}?token=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJ1c2VybmFtZSI6Im5pa2VUcmkwMSIsImVtYWlsIjoidHJpcHRpMTIzNDY3ODk4QGdtYWlsLmNvbSIsImlhdCI6MTcxNTA4MDMxM30.cXQgCBjYSlceLFcFPs_VEVhCcJ7-ou_c4TMnZ4F36lY `}
             alt={record.name}
             style={{ maxWidth: "100px" }}
           />
-        ):<p>No Found!</p>,
+        ) : (
+          <p>No Found!</p>
+        ),
     },
     {
       title: "Email",

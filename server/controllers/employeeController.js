@@ -8,23 +8,22 @@ const path = require("path");
 const MDDepartment = require("../models/departmentMD");
 const MDEmployee = require("../models/EmployeeMD");
 const fs = require("fs");
+const axios = require ("axios");
 
 exports.createEmployee = async (req, res) => {
   const { name, email, phone, gender, dob, dept_id } = req.body;
   const createdBy = req.userData.userId;
-console.log(name, email, phone, gender, dob, dept_id );
+  console.log(name, email, phone, gender, dob, dept_id);
   try {
     if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded.'});
+      return res.status(400).json({ message: 'No file uploaded.' });
     }
     let emp_img = req.file.filename;
-    if (process.env.DB_CONNECTION == "MD") {
+    if (process.env.DB_CONNECTION === "MD") {
       // For MongoDB
       const findEmail = await MDEmployee.findOne({ email });
       if (findEmail) {
-        return res
-          .status(400)
-          .json({ message: "Employee already exists with this email." });
+        return res.status(400).json({ message: "Employee already exists with this email." });
       }
 
       const employee = await MDEmployee.create({
@@ -37,14 +36,13 @@ console.log(name, email, phone, gender, dob, dept_id );
         isDeleted: 0,
         created_by: createdBy,
         created_at: new Date(),
+        emp_img, // Added emp_img for MongoDB case
       });
       return res.json(employee);
     } else {
       const findEmail = await Employee.findOne({ where: { email } });
       if (findEmail) {
-        return res
-          .status(400)
-          .json({ message: "Employee already exists with this email." });
+        return res.status(400).json({ message: "Employee already exists with this email." });
       }
       const employee = await Employee.create({
         name,
@@ -65,6 +63,7 @@ console.log(name, email, phone, gender, dob, dept_id );
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 exports.createEmployeeAndDept = async (req, res) => {
   const { name, email, phone, gender, dob, dept_name } = req.body;
@@ -130,6 +129,7 @@ exports.getOneEmployees = async (req, res) => {
         },
       });
     }
+    
     const filePath =
       employee.emp_img && `${process.env.IMAGE_PORT}${employee.emp_img}`;
 

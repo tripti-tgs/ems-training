@@ -3,6 +3,8 @@ import http from "../services/httpService";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { UploadOutlined } from "@ant-design/icons";
+import axios from "axios";
+
 import {
   Button,
   DatePicker,
@@ -36,6 +38,8 @@ const AddEmployee = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [images, setImages] = useState(null);
+
+
   const fetchDepartment = useCallback(async () => {
     try {
       const response = await http.get("/department");
@@ -54,8 +58,6 @@ const AddEmployee = () => {
         const { name, email, phone, dept_id, gender, dob, emp_img } = response;
 
         const formattedDob = dayjs(dob).format("YYYY-MM-DD");
-
-        console.log("imges", emp_img);
         setImages(emp_img);
 
         form.setFieldsValue({
@@ -89,12 +91,10 @@ const AddEmployee = () => {
       } else {
         const parts = values.emp_img.split("/");
         const imageName = parts[parts.length - 1];
-        // Create a File object from the URL
         const response = await fetch(values.emp_img);
         const blob = await response.blob();
         file = new File([blob], imageName, { type: "image/jpeg" });
       }
-      console.log(file);
 
       for (let key in values) {
         if (key === "dob") {
@@ -232,7 +232,7 @@ const AddEmployee = () => {
               {images ? (
                 <Image
                   width={150}
-                  src={typeof images === "string" ? images : images.thumbUrl}
+                  src={typeof images === "string" ? `${images}?token=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJ1c2VybmFtZSI6Im5pa2VUcmkwMSIsImVtYWlsIjoidHJpcHRpMTIzNDY3ODk4QGdtYWlsLmNvbSIsImlhdCI6MTcxNTA4MDMxM30.cXQgCBjYSlceLFcFPs_VEVhCcJ7-ou_c4TMnZ4F36lY` : images.thumbUrl}
                 />
               ) : (
                 <p>No image found!</p>
