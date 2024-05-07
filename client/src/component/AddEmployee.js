@@ -3,7 +3,8 @@ import http from "../services/httpService";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { UploadOutlined } from "@ant-design/icons";
-import axios from "axios";
+
+import CryptoJS from "crypto-js";
 
 import {
   Button,
@@ -38,7 +39,8 @@ const AddEmployee = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [images, setImages] = useState(null);
-
+  let token =
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJ1c2VybmFtZSI6Im5pa2VUcmkwMSIsImVtYWlsIjoidHJpcHRpMTIzNDY3ODk4QGdtYWlsLmNvbSIsImlhdCI6MTcxNTA4MDMxM30.cXQgCBjYSlceLFcFPs_VEVhCcJ7-ou_c4TMnZ4F36lY";
 
   const fetchDepartment = useCallback(async () => {
     try {
@@ -58,7 +60,16 @@ const AddEmployee = () => {
         const { name, email, phone, dept_id, gender, dob, emp_img } = response;
 
         const formattedDob = dayjs(dob).format("YYYY-MM-DD");
-        setImages(emp_img);
+      
+
+        let url = `${emp_img}?token=${token}`;
+        const imageResponse = await fetch(url);
+        console.log(imageResponse.url)
+        const blob = await imageResponse.blob();
+        console.log(blob)
+        const imageUrl = URL.createObjectURL(blob);
+        setImages(imageUrl);
+       
 
         form.setFieldsValue({
           name,
@@ -73,7 +84,7 @@ const AddEmployee = () => {
         console.error(err);
       }
     }
-  }, [id, form]);
+  }, [id, form,token]);
 
   useEffect(() => {
     fetchDepartment();
@@ -232,7 +243,9 @@ const AddEmployee = () => {
               {images ? (
                 <Image
                   width={150}
-                  src={typeof images === "string" ? `${images}?token=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJ1c2VybmFtZSI6Im5pa2VUcmkwMSIsImVtYWlsIjoidHJpcHRpMTIzNDY3ODk4QGdtYWlsLmNvbSIsImlhdCI6MTcxNTA4MDMxM30.cXQgCBjYSlceLFcFPs_VEVhCcJ7-ou_c4TMnZ4F36lY` : images.thumbUrl}
+                  src={
+                    typeof images === "string" ? `${images}` : images.thumbUrl
+                  }
                 />
               ) : (
                 <p>No image found!</p>
