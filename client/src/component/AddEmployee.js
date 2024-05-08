@@ -3,8 +3,7 @@ import http from "../services/httpService";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { UploadOutlined } from "@ant-design/icons";
-
-import CryptoJS from "crypto-js";
+import forge from "node-forge";
 
 import {
   Button,
@@ -17,6 +16,7 @@ import {
   Upload,
   Image,
 } from "antd";
+
 import dayjs from "dayjs";
 
 const { Option } = Select;
@@ -40,7 +40,7 @@ const AddEmployee = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState(null);
   let token =
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJ1c2VybmFtZSI6Im5pa2VUcmkwMSIsImVtYWlsIjoidHJpcHRpMTIzNDY3ODk4QGdtYWlsLmNvbSIsImlhdCI6MTcxNTA4MDMxM30.cXQgCBjYSlceLFcFPs_VEVhCcJ7-ou_c4TMnZ4F36lY";
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJ1c2VybmFtZSI6Im5pa2VUcmkwMSIsImVtYWlsIjoidHJpcHRpMTIzNDY3ODk4QGdtYWlsLmNvbSIsImlhdCI6MTcxNTA4MDMxM30.cXQgCBjYSlceLFcFPs_VEVhCcJ7-ou_c4TMnZ4F36lY";
 
   const fetchDepartment = useCallback(async () => {
     try {
@@ -60,16 +60,14 @@ const AddEmployee = () => {
         const { name, email, phone, dept_id, gender, dob, emp_img } = response;
 
         const formattedDob = dayjs(dob).format("YYYY-MM-DD");
-      
 
         let url = `${emp_img}?token=${token}`;
         const imageResponse = await fetch(url);
-        console.log(imageResponse.url)
+        console.log(imageResponse.url);
+        // setImages(imageResponse.url);
         const blob = await imageResponse.blob();
-        console.log(blob)
         const imageUrl = URL.createObjectURL(blob);
         setImages(imageUrl);
-       
 
         form.setFieldsValue({
           name,
@@ -84,11 +82,12 @@ const AddEmployee = () => {
         console.error(err);
       }
     }
-  }, [id, form,token]);
+  }, [id, form, token]);
 
   useEffect(() => {
     fetchDepartment();
     fetchEmployee();
+
   }, []);
 
   const onFinish = useCallback(
