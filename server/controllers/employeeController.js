@@ -187,9 +187,12 @@ exports.getEmpAndDep = async (req, res) => {
 
     arr = arr ? arr : employees;
  
-    arr.map((e) => {
+    arr.map(async(e) => {
       const filePath = e.emp_img && `${process.env.IMAGE_PORT}${e.emp_img}`;
-
+      // console.log(filePath) 
+      // const imageResponse = await fetch(filePath);
+      //   const blob = await imageResponse.blob();
+      //   const imageUrl = URL.createObjectURL(blob);
       return (e.emp_img = filePath);
     });
 

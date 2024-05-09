@@ -11,7 +11,7 @@ let axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   function (config) {
     const token =
-       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJ1c2VybmFtZSI6Im5pa2VUcmkwMSIsImVtYWlsIjoidHJpcHRpMTIzNDY3ODk4QGdtYWlsLmNvbSIsImlhdCI6MTcxNTA4MDMxM30.cXQgCBjYSlceLFcFPs_VEVhCcJ7-ou_c4TMnZ4F36lY";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJ1c2VybmFtZSI6Im5pa2VUcmkwMSIsImVtYWlsIjoidHJpcHRpMTIzNDY3ODk4QGdtYWlsLmNvbSIsImlhdCI6MTcxNTIzMTI5MX0.A1MJuySwoy49W7LFRLgqgrsupns0v-irmEdYxjTP0Xo";
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -66,8 +66,8 @@ const put = async (url, data) => {
   const response = await axiosInstance.put(url, data, {
     headers: {
       "Content-Type": "multipart/form-data",
-    }
-});
+    },
+  });
   return response;
 };
 

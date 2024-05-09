@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
-    // const authHeader = req.headers.authorization;
-    const authHeader = req.query.token;
+    const authHeader = req.headers.authorization;
+// console.log(authHeader)
+    // let authHeader = req.query.token;
     if (!authHeader) {
       return res.status(401).json({ message: 'Authorization header is missing' });
     }

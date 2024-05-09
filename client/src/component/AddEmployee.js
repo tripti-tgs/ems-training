@@ -3,7 +3,6 @@ import http from "../services/httpService";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { UploadOutlined } from "@ant-design/icons";
-import forge from "node-forge";
 
 import {
   Button,
@@ -40,12 +39,11 @@ const AddEmployee = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState(null);
   let token =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJ1c2VybmFtZSI6Im5pa2VUcmkwMSIsImVtYWlsIjoidHJpcHRpMTIzNDY3ODk4QGdtYWlsLmNvbSIsImlhdCI6MTcxNTA4MDMxM30.cXQgCBjYSlceLFcFPs_VEVhCcJ7-ou_c4TMnZ4F36lY";
+    "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ4OEQ2QTc4QjM0QjU5QzE1RTQxQUM0QTZCOTVEQzhGIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE3MTUyMzU1NzQsImV4cCI6MTcxNTIzOTE3NCwiaXNzIjoiaHR0cHM6Ly8xOTIuMTY4LjAuMTQzOjQ0NDAiLCJhdWQiOlsiUTJDQVBJIiwiSWRlbnRpdHlTZXJ2ZXJBUEkiXSwiY2xpZW50X2lkIjoiUTJDIFVJIiwic3ViIjoiY2ZjNTExYmYtOWZkOC00M2E4LWJlMDUtNmJjZDU5NWYyNzI0IiwiYXV0aF90aW1lIjoxNzE1MjM1NTcxLCJpZHAiOiJsb2NhbCIsInVzZXJpZCI6ImNmYzUxMWJmLTlmZDgtNDNhOC1iZTA1LTZiY2Q1OTVmMjcyNCIsImVtYWlsIjoiIiwicm9sZSI6IiIsIlBob25lIjoiIiwic2lkIjoiMkU1NzJGODFENDk4N0Q0MkQ2NjM1RjBCMUNBNjkzNkYiLCJpYXQiOjE3MTUyMzU1NzQsInNjb3BlIjpbIm9wZW5pZCIsInByb2ZpbGUiLCJJZGVudGl0eVNlcnZlckFQSSIsIlEyQ0Zyb250RW5kIiwiUTJDUmVwb3J0RGVzaWduZXIiLCJRMkNSZXBvcnRWaWV3ZXIiXSwiYW1yIjpbInB3ZCJdfQ.tybErfY8fz2EDcX_aNx-HcFae0Ue30V87N810m1iI8pnuPwV9M-Jt7TfEqbcPEvfRRK2Y61qE2XRGpInYFRu_Si23k5gnMUcdivN6t6Pigj4W5xLCsHg6niBIpmOQNzydoDWd7yLx1WDbjptfDr0B5C58ylLDhFKsTmEGsgQ0U3XQzYbyepd2hTKj4qpUXlYpaOWculx7Znl8lqCaLMPvbu69dbQTRx78l4FCZILn5gh-5wmsJtWdy0sdSs2Ss5rlO0NFlE4ceayxk9_SoY5uDPX0n7vkey8jNZtJGVaYb2RLQDkDNrQskO-TRLB7czbj3FUHig1BMIetVLMGc49XA";
 
   const fetchDepartment = useCallback(async () => {
     try {
       const response = await http.get("/department");
-      console.log(response);
       setDept(response);
       setInfo(null);
     } catch (err) {
@@ -61,13 +59,18 @@ const AddEmployee = () => {
 
         const formattedDob = dayjs(dob).format("YYYY-MM-DD");
 
-        let url = `${emp_img}?token=${token}`;
-        const imageResponse = await fetch(url);
-        console.log(imageResponse.url);
-        // setImages(imageResponse.url);
+
+        let url = `${emp_img}`;
+        const imageResponse = await fetch(url,{
+          headers :{
+            "Authorization" : token
+          }
+        });
+        if (imageResponse.url.includes('/upload')) {
         const blob = await imageResponse.blob();
         const imageUrl = URL.createObjectURL(blob);
         setImages(imageUrl);
+      }
 
         form.setFieldsValue({
           name,
@@ -87,8 +90,11 @@ const AddEmployee = () => {
   useEffect(() => {
     fetchDepartment();
     fetchEmployee();
+    return () => {
+      URL.revokeObjectURL(images);
+    };
 
-  }, []);
+  }, [token]);
 
   const onFinish = useCallback(
     async (values) => {
