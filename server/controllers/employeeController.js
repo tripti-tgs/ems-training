@@ -10,15 +10,15 @@ const MDEmployee = require("../models/EmployeeMD");
 const fs = require("fs");
 const axios = require ("axios");
 
-exports.createEmployee = async (req, res) => {
+exports.createEmployee = async (req, res,filename) => {
   const { name, email, phone, gender, dob, dept_id } = req.body;
   const createdBy = req.userData.userId;
   console.log(name, email, phone, gender, dob, dept_id);
   try {
-    if (!req.file) {
+    if (!filename) {
       return res.status(400).json({ message: 'No file uploaded.' });
     }
-    let emp_img = req.file.filename;
+    let emp_img = filename;
     if (process.env.DB_CONNECTION === "MD") {
       // For MongoDB
       const findEmail = await MDEmployee.findOne({ email });

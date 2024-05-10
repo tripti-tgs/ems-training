@@ -39,7 +39,7 @@ const AddEmployee = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState(null);
   let token =
-    "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ4OEQ2QTc4QjM0QjU5QzE1RTQxQUM0QTZCOTVEQzhGIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE3MTUyMzU1NzQsImV4cCI6MTcxNTIzOTE3NCwiaXNzIjoiaHR0cHM6Ly8xOTIuMTY4LjAuMTQzOjQ0NDAiLCJhdWQiOlsiUTJDQVBJIiwiSWRlbnRpdHlTZXJ2ZXJBUEkiXSwiY2xpZW50X2lkIjoiUTJDIFVJIiwic3ViIjoiY2ZjNTExYmYtOWZkOC00M2E4LWJlMDUtNmJjZDU5NWYyNzI0IiwiYXV0aF90aW1lIjoxNzE1MjM1NTcxLCJpZHAiOiJsb2NhbCIsInVzZXJpZCI6ImNmYzUxMWJmLTlmZDgtNDNhOC1iZTA1LTZiY2Q1OTVmMjcyNCIsImVtYWlsIjoiIiwicm9sZSI6IiIsIlBob25lIjoiIiwic2lkIjoiMkU1NzJGODFENDk4N0Q0MkQ2NjM1RjBCMUNBNjkzNkYiLCJpYXQiOjE3MTUyMzU1NzQsInNjb3BlIjpbIm9wZW5pZCIsInByb2ZpbGUiLCJJZGVudGl0eVNlcnZlckFQSSIsIlEyQ0Zyb250RW5kIiwiUTJDUmVwb3J0RGVzaWduZXIiLCJRMkNSZXBvcnRWaWV3ZXIiXSwiYW1yIjpbInB3ZCJdfQ.tybErfY8fz2EDcX_aNx-HcFae0Ue30V87N810m1iI8pnuPwV9M-Jt7TfEqbcPEvfRRK2Y61qE2XRGpInYFRu_Si23k5gnMUcdivN6t6Pigj4W5xLCsHg6niBIpmOQNzydoDWd7yLx1WDbjptfDr0B5C58ylLDhFKsTmEGsgQ0U3XQzYbyepd2hTKj4qpUXlYpaOWculx7Znl8lqCaLMPvbu69dbQTRx78l4FCZILn5gh-5wmsJtWdy0sdSs2Ss5rlO0NFlE4ceayxk9_SoY5uDPX0n7vkey8jNZtJGVaYb2RLQDkDNrQskO-TRLB7czbj3FUHig1BMIetVLMGc49XA";
+    "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ4OEQ2QTc4QjM0QjU5QzE1RTQxQUM0QTZCOTVEQzhGIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE3MTUyNTM4ODcsImV4cCI6MTcxNTI1NzQ4NywiaXNzIjoiaHR0cHM6Ly8xOTIuMTY4LjAuMTQzOjQ0NDAiLCJhdWQiOlsiUTJDQVBJIiwiSWRlbnRpdHlTZXJ2ZXJBUEkiXSwiY2xpZW50X2lkIjoiUTJDIFVJIiwic3ViIjoiY2ZjNTExYmYtOWZkOC00M2E4LWJlMDUtNmJjZDU5NWYyNzI0IiwiYXV0aF90aW1lIjoxNzE1MjUzODQxLCJpZHAiOiJsb2NhbCIsInVzZXJpZCI6ImNmYzUxMWJmLTlmZDgtNDNhOC1iZTA1LTZiY2Q1OTVmMjcyNCIsImVtYWlsIjoiIiwicm9sZSI6IiIsIlBob25lIjoiIiwic2lkIjoiMzM3MUU0MTBBNDZEQUE1NTdBOTYyNzRGQzM4MTMzOEUiLCJpYXQiOjE3MTUyNTM4ODcsInNjb3BlIjpbIm9wZW5pZCIsInByb2ZpbGUiLCJJZGVudGl0eVNlcnZlckFQSSIsIlEyQ0Zyb250RW5kIiwiUTJDUmVwb3J0RGVzaWduZXIiLCJRMkNSZXBvcnRWaWV3ZXIiXSwiYW1yIjpbInB3ZCJdfQ.U514NTwpwJrzPYg6rqdwXc_vqcrYBLBqrzC0EDPuTCAhV2do6gu8bJR2sOI2TbJ4IOZF0HZrDslUIDhiLDhIJwIt6PPqH8LtVE7X_3UN2DmUmp66EKgfjAkcE2bNtETALy1k9lDt5kRkdXi5V7iLMjBWea6D-WMCeBY227ITq7r_pF8jGs5b7RQjDw940KOFxWBdW91gB4G8gh0Z8Dxrop0HpVcNUVIbEaQ4cfuKcIAYKVumK02i4EWz96pIs1L_wNWppZaEDezlK115lGmAny-6Tuu7snj4qU_ZVQ9kTiZxusEx4W5R3_ZBIQUYiyUBEY0O_TdKbSzKGFhDKNnb1Q";
 
   const fetchDepartment = useCallback(async () => {
     try {
@@ -59,18 +59,18 @@ const AddEmployee = () => {
 
         const formattedDob = dayjs(dob).format("YYYY-MM-DD");
 
-
         let url = `${emp_img}`;
-        const imageResponse = await fetch(url,{
-          headers :{
-            "Authorization" : token
-          }
+        const imageResponse = await fetch(url, {
+          headers: {
+            Authorization: token,
+          },
         });
-        if (imageResponse.url.includes('/upload')) {
-        const blob = await imageResponse.blob();
-        const imageUrl = URL.createObjectURL(blob);
-        setImages(imageUrl);
-      }
+        
+        if (imageResponse.url.includes("/upload")) {
+          const blob = await imageResponse.blob();
+          const imageUrl = URL.createObjectURL(blob);
+          setImages(imageUrl);
+        }
 
         form.setFieldsValue({
           name,
@@ -93,7 +93,6 @@ const AddEmployee = () => {
     return () => {
       URL.revokeObjectURL(images);
     };
-
   }, [token]);
 
   const onFinish = useCallback(
@@ -121,6 +120,12 @@ const AddEmployee = () => {
           formDataToSend.append(key, values[key]);
         }
       }
+      formDataToSend.append('resumableChunkNumber', '1');
+      formDataToSend.append('resumableChunkSize', 1*1024*1024);
+      formDataToSend.append('resumableIdentifier', file.name);
+      formDataToSend.append('resumableFilename', file.name);
+      formDataToSend.append('resumableTotalSize', file.size.toString());
+
       try {
         const response = id
           ? await http.put(`/employee/${id}`, formDataToSend)
