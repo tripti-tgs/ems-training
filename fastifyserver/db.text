@@ -1,0 +1,94 @@
+
+----------------------------Create Users Table-------------------------------------------------
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255),
+    email VARCHAR(255),
+    password VARCHAR(255)
+);
+
+
+-----------------------Create Department Table------------------------------------------
+CREATE TABLE department (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    isDeleted TINYINT,
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    created_by INT,
+    updated_by INT,
+    deleted_by INT,
+    FOREIGN KEY (created_by) REFERENCES Users(id),
+    FOREIGN KEY (updated_by) REFERENCES Users(id),
+    FOREIGN KEY (deleted_by) REFERENCES Users(id)
+);
+
+-----------------------Create Employee Table------------------------------------------
+CREATE TABLE employee (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    email VARCHAR(255),
+    phone INT,
+    gender TINYINT,
+    dob DATE,
+    dept_id INT,
+    isDeleted TINYINT,
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    created_by INT,
+    updated_by INT,
+    deleted_by INT,
+    FOREIGN KEY (dept_id) REFERENCES Department(id),
+    FOREIGN KEY (created_by) REFERENCES Users(id),
+    FOREIGN KEY (updated_by) REFERENCES Users(id),
+    FOREIGN KEY (deleted_by) REFERENCES Users(id)
+);
+
+----------------------------Create Salary Table-----------------------------------
+
+CREATE TABLE salary (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    emp_id INT,
+    salary DECIMAL(10, 2),
+    date DATE,
+    isDeleted TINYINT,
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    created_by INT,
+    updated_by INT,
+    deleted_by INT,
+    FOREIGN KEY (emp_id) REFERENCES Employee(id),
+    FOREIGN KEY (created_by) REFERENCES Users(id),
+    FOREIGN KEY (updated_by) REFERENCES Users(id),
+    FOREIGN KEY (deleted_by) REFERENCES Users(id)
+);
+
+-----------------------------------Delete Department-------------------------------------
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteDepartment`(IN deptId INT)
+BEGIN
+  DECLARE error_message VARCHAR(255);
+  DECLARE exit_handler BOOLEAN DEFAULT FALSE;
+
+  DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+  BEGIN
+    SET exit_handler = TRUE;
+    GET DIAGNOSTICS CONDITION 1 error_message = MESSAGE_TEXT;
+  END;
+
+  IF EXISTS (SELECT * FROM employee WHERE dept_id = deptId AND isDeleted = 0) THEN
+    SET error_message = 'Department is used in employees table';
+    SELECT 'error' AS result, error_message AS message;
+  ELSE
+    UPDATE department SET isDeleted = 1, deleted_by = deptId, deleted_at = NOW() WHERE id = deptId;
+
+    IF exit_handler THEN
+      SELECT 'error' AS result, error_message AS message;
+    ELSE
+      SELECT 'success' AS result;
+    END IF;
+  END IF;
+END

@@ -23,7 +23,7 @@ module.exports = resumable = function (temporaryFolder) {
     // What would the file name be?
     // console.log(path.join('C:/EMS_images/upload', './resumable-'+identifier+'.'+chunkNumber+'.jpg'))
     return path.join(
-      "C:/EMS_images/upload",
+      process.env.IMAGE_DISK,
       "./resumable-" + identifier + "." + "jpg"
     );
   };
