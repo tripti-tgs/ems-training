@@ -1,6 +1,6 @@
-import app from './app';
-import sequelize from './src/db/index';
-import connection from './src/db/connection';
+const app = require('./app');
+const sequelize = require('./src/db/index');
+const connection = require('./src/db/connection');
 
 const PORT = process.env.PORT || 4000;
 

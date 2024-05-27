@@ -4,7 +4,7 @@ const authMiddleware = require("../middleware/auth");
 const validateMiddleware = require("../middleware/validation");
 const employeeController = require("../controllers/employeeController");
 const multipart = require('connect-multiparty');
-var resumable = require('../resumable-node.js')('/tmp/resumable.js/');
+var resumable = require('../../resumable-node.js')('/tmp/resumable.js/');
 const router = express.Router();
 
 router.use(multipart());
