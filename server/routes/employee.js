@@ -4,10 +4,7 @@ const authMiddleware = require("../middleware/auth");
 const validateMiddleware = require("../middleware/validation");
 const employeeController = require("../controllers/employeeController");
 const multipart = require('connect-multiparty');
-const multer = require("multer");
 var resumable = require('../resumable-node.js')('/tmp/resumable.js/');
-const path = require("path");
-const fs = require("fs").promises;
 const router = express.Router();
 
 router.use(multipart());
@@ -24,9 +21,9 @@ router.post(
     body("dept_id").notEmpty().withMessage("Department ID is required"),
   ],
   async (req, res) => {
+
     try {
       await resumable.post(req, async (status, filename, original_filename, identifier) => {
-        console.log(status)
         if (status === 'done') {
           console.log('File upload completed:', filename);
           await validateMiddleware(req, res, async () => {
@@ -54,6 +51,7 @@ router.post(
     body("dept_name").notEmpty().withMessage("Invalid department Name"),
   ],
   async (req, res) => {
+
     try {
       await resumable.post(req, async (status, filename, original_filename, identifier) => {
         console.log(status)

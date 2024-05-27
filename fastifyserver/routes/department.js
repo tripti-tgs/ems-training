@@ -34,19 +34,15 @@ async function departmentRoutes(fastify, options) {
       schema: {
         body: {
           type: "object",
-          required: ['name'],
+          required: ["name"],
           properties: {
-            name: { type: "string", minLength: 2 }
-          },
-          // errorMessage: {
-          //   required: {
-          //     name: "Name is required"
-          //   },
-          //   properties: {
-          //     name: "Name must be at least 2 characters long"
-          //   }
-          // }
-        }
+            name: {
+              type: "string",
+              minLength: 2
+            }
+          }
+          }
+        
       }
     },
     departmentController.updateDepartment

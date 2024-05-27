@@ -1,0 +1,6 @@
+{"time":"2024-05-27 16:01:21:121","level":"\u001b[32minfo\u001b[39m","message":"Request: POST /user/register"}
+{"time":"2024-05-27 16:01:56:156","level":"\u001b[32minfo\u001b[39m","message":"Request: POST /user/register"}
+{"time":"2024-05-27 16:02:28:228","level":"\u001b[32minfo\u001b[39m","message":"Request: POST /user/register"}
+{"time":"2024-05-27 16:03:43:343","level":"\u001b[32minfo\u001b[39m","message":"Request: POST /user/register"}
+{"time":"2024-05-27 16:04:23:423","level":"info","message":"Request: POST /user/register"}
+{"time":"2024-05-27 16:04:36:436","level":"info","message":"Request: POST /user/register"}

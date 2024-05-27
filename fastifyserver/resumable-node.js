@@ -23,7 +23,7 @@ module.exports = resumable = function (temporaryFolder) {
     // What would the file name be?
     // console.log(path.join('C:/EMS_images/upload', './resumable-'+identifier+'.'+chunkNumber+'.jpg'))
     return path.join(
-      "C:/EMS_images/upload",
+      process.env.IMAGE_DISK,
       "./resumable-" + identifier + "." + "jpg"
     );
   };
@@ -118,8 +118,7 @@ module.exports = resumable = function (temporaryFolder) {
   //'non_resumable_request', null, null, null
   $.post = function (req, callback) {
     var fields = req.body;
-    var files = req.files;
-    console.log(fields)
+    var files = req.body;
     var chunkNumber = fields["resumableChunkNumber"];
     var chunkSize = fields["resumableChunkSize"];
     var totalSize = fields["resumableTotalSize"];
@@ -129,7 +128,7 @@ module.exports = resumable = function (temporaryFolder) {
 
     var original_filename = fields["resumableIdentifier"];
 
-    if (!files[$.fileParameterName] || !files[$.fileParameterName].size) {
+    if (!files[$.fileParameterName] || !files[$.fileParameterName].file.bytesRead) {
       callback("invalid_resumable_request", null, null, null);
       return;
     }
@@ -138,10 +137,10 @@ module.exports = resumable = function (temporaryFolder) {
       chunkSize,
       totalSize,
       identifier,
-      files[$.fileParameterName].size
+      files[$.fileParameterName].file.bytesRead
     );
     if (validation == "valid") {
-      var chunkFilename = getChunkFilename(chunkNumber, identifier);
+      var chunkFilename = getChunkFilename(chunkNumber, identifier,files[$.fileParameterName]);
 
       // Save the chunk (TODO: OVERWRITE)
       fs.rename(files[$.fileParameterName].path, chunkFilename, function () {
