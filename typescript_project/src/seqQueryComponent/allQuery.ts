@@ -27,12 +27,6 @@ const updateQuery = async (modelName: any, data: any): Promise<any> => {
   return await modelName.update(data);
 };
 
-const deleteDepartmentBYId = async (deptId: number | string): Promise<any> => {
-  const [results] = await sequelize.query("CALL DeleteDepartment(:deptId)", {
-    replacements: { deptId },
-  });
-  return results;
-};
 
 const deleteData = async (data: any): Promise<any> => {
   const { tableName, columnName, columnValue } = data;
@@ -63,7 +57,6 @@ export {
   findAllQuery,
   findByPkQuery,
   updateQuery,
-  deleteDepartmentBYId,
   deleteData,
   deleteDataAll
 }

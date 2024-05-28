@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import Department from "../models/department";
-import { createQuery, findOneQuery, findAllQuery, findByPkQuery, updateQuery, deleteDepartmentBYId, deleteDataAll ,deleteData} from "../seqQueryComponent/allQuery"
+import { createQuery, findOneQuery, findAllQuery, findByPkQuery, updateQuery, deleteDataAll ,deleteData} from "../seqQueryComponent/allQuery"
 import logger from '../logs/logger';
+import sequelize from "../db/index"
 
 const createDepartment = async (req: any, res: Response): Promise<Response | void> => {
   const { name } = req.body;
@@ -75,5 +76,13 @@ const deleteDepartment = async (req: Request, res: Response): Promise<Response |
     res.status(500).json({ message: "Server error" });
   }
 };
+
+const deleteDepartmentBYId = async (deptId: number | string): Promise<any> => {
+  const [results] = await sequelize.query("CALL DeleteDepartment(:deptId)", {
+    replacements: { deptId },
+  });
+  return results;
+};
+
 
 export default { createDepartment, getAllDepartments, updateDepartment, deleteDepartment };
