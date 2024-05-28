@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import Department from "../models/department";
-import { createQuery, findOneQuery, findAllQuery, findByPkQuery, updateQuery ,deleteDepartmentBYId} from "../seqQueryComponent/allQuery"
+import { createQuery, findOneQuery, findAllQuery, findByPkQuery, updateQuery, deleteDepartmentBYId, deleteDataAll ,deleteData} from "../seqQueryComponent/allQuery"
 import logger from '../logs/logger';
 
-const createDepartment = async (req: Request, res: Response): Promise<Response | void> => {
+const createDepartment = async (req: any, res: Response): Promise<Response | void> => {
   const { name } = req.body;
-  const createdBy = req.body.userData.userId;
+  const createdBy = req.userData.userId;
 
   try {
     const existingDepartment = await findOneQuery(Department, `SELECT * FROM department WHERE name = '${name}';`);
@@ -38,10 +38,10 @@ const getAllDepartments = async (req: Request, res: Response): Promise<Response 
   }
 };
 
-const updateDepartment = async (req: Request, res: Response): Promise<Response | void> => {
+const updateDepartment = async (req: any, res: Response): Promise<Response | void> => {
   const { id } = req.params;
   const { name } = req.body;
-  const updatedBy = req.body.userData.userId;
+  const updatedBy = req.userData.userId;
 
   try {
     let department = await findByPkQuery(Department, id);
@@ -61,8 +61,11 @@ const updateDepartment = async (req: Request, res: Response): Promise<Response |
 
 const deleteDepartment = async (req: Request, res: Response): Promise<Response | void> => {
   const { id } = req.params;
+
   try {
-    const result = await deleteDepartmentBYId(id);
+    // const result = await deleteDepartmentBYId(id);
+    // const result = await deleteData(req.body);
+    const result = await deleteDataAll(req.body);
     if (result && result.result === "error") {
       return res.status(400).json({ message: result.message });
     }

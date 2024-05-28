@@ -33,11 +33,37 @@ const deleteDepartmentBYId = async (deptId: number | string): Promise<any> => {
   });
   return results;
 };
+
+const deleteData = async (data: any): Promise<any> => {
+  const { tableName, columnName, columnValue } = data;
+  const [results] = await sequelize.query("CALL DeleteData(:tableName, :columnName, :columnValue)", {
+    replacements: {
+      tableName,
+      columnName,
+      columnValue
+    }
+  });
+  return results;
+};
+
+
+const deleteDataAll = async (data: any): Promise<any> => {
+
+  data = JSON.stringify(data)
+  const [results] = await sequelize.query("CALL DeleteMultipleData(:data)", {
+    replacements: {
+    data
+    }
+  });
+  return results;
+};
 export {
   createQuery,
   findOneQuery,
   findAllQuery,
   findByPkQuery,
   updateQuery,
-  deleteDepartmentBYId
+  deleteDepartmentBYId,
+  deleteData,
+  deleteDataAll
 }

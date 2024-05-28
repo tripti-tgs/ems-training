@@ -23,7 +23,7 @@ router.put(
   validateMiddleware,
   departmentController.updateDepartment
 );
-
-router.delete("/:id", departmentController.deleteDepartment);
+// router.delete("/:id", departmentController.deleteDepartment);
+router.post("/delete", departmentController.deleteDepartment);
 
 export default router;
